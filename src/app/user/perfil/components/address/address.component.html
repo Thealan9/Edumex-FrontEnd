@@ -1,0 +1,107 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="--background: #f8fafc; px-4">
+    <ion-title class="text-xs font-black uppercase tracking-widest text-slate-800">
+      {{ isEdit ? 'Editar' : 'Nueva' }} Dirección
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline" class="text-slate-400"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-slate-50">
+  <div class="p-6 space-y-4">
+
+    <div class="space-y-1">
+      <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">¿Quién recibe?</label>
+      <div class="bg-white border border-slate-100 rounded-2xl p-2 shadow-sm">
+        <ion-input [(ngModel)]="form.recipient_name" placeholder="Nombre completo" class="text-sm font-bold"></ion-input>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="space-y-1">
+        <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Teléfono</label>
+        <div class="bg-white border border-slate-100 rounded-2xl p-2 shadow-sm">
+          <ion-input [(ngModel)]="form.recipient_phone" placeholder="10 dígitos" class="text-sm font-bold"></ion-input>
+        </div>
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">C.P.</label>
+        <div class="bg-white border border-slate-100 rounded-2xl p-2 shadow-sm">
+          <ion-input [(ngModel)]="form.postal_code" placeholder="CP" class="text-sm font-bold"></ion-input>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="space-y-1">
+        <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Estado</label>
+        <div class="bg-white border border-slate-100 rounded-2xl p-2 shadow-sm">
+          <ion-input [(ngModel)]="form.state" placeholder="Ej. Veracruz" class="text-sm font-bold"></ion-input>
+        </div>
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Municipio</label>
+        <div class="bg-white border border-slate-100 rounded-2xl p-2 shadow-sm">
+          <ion-input [(ngModel)]="form.municipality" placeholder="Ej. Papantla" class="text-sm font-bold"></ion-input>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="space-y-1">
+        <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Ciudad</label>
+        <div class="bg-white border border-slate-100 rounded-2xl p-2 shadow-sm">
+          <ion-input [(ngModel)]="form.locality" placeholder="Ej. Papantla" class="text-sm font-bold"></ion-input>
+        </div>
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Colonia</label>
+        <div class="bg-white border border-slate-100 rounded-2xl p-2 shadow-sm">
+          <ion-input [(ngModel)]="form.neighborhood" placeholder="Ej. Centro" class="text-sm font-bold"></ion-input>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+      <div class="col-span-1 space-y-1">
+        <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Calle</label>
+        <div class="bg-white border border-slate-100 rounded-2xl p-2 shadow-sm">
+          <ion-input [(ngModel)]="form.street" placeholder="Av. Principal" class="text-sm font-bold"></ion-input>
+        </div>
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest"># Ext</label>
+        <div class="bg-white border border-slate-100 rounded-2xl p-2 shadow-sm">
+          <ion-input [(ngModel)]="form.external_number" placeholder="123" class="text-sm font-bold"></ion-input>
+        </div>
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest"># Int</label>
+        <div class="bg-white border border-slate-100 rounded-2xl p-2 shadow-sm">
+          <ion-input [(ngModel)]="form.internal_number" placeholder="Opcional" class="text-sm font-bold"></ion-input>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-1">
+      <label class="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Referencias / Indicaciones</label>
+      <div class="bg-white border border-slate-100 rounded-2xl p-2 shadow-sm">
+        <ion-textarea [(ngModel)]="form.references" rows="2" placeholder="Ej. Portón azul, frente al parque..." class="text-xs font-bold"></ion-textarea>
+      </div>
+    </div>
+
+    <ion-item lines="none" class="--background: transparent; font-size: 12px; font-weight: bold;">
+      <ion-checkbox slot="start" [(ngModel)]="form.is_default"></ion-checkbox>
+      <ion-label>Marcar como predeterminada</ion-label>
+    </ion-item>
+
+    <button (click)="save()"
+            class="w-full bg-blue-600 text-white py-4 rounded-3xl font-black uppercase text-[11px] shadow-xl shadow-blue-200 active:scale-95 transition-all mt-6">
+      {{ isEdit ? 'Actualizar Dirección' : 'Guardar Dirección' }}
+    </button>
+  </div>
+</ion-content>

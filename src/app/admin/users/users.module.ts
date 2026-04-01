@@ -1,0 +1,22 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { IonicModule } from '@ionic/angular';
+
+import { UsersPageRoutingModule } from './users-routing.module';
+
+import { UsersPage } from './users.page';
+import {CreateEditComponent} from "./components/create-edit/create-edit.component";
+
+@NgModule({
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    UsersPageRoutingModule,
+    ReactiveFormsModule
+  ],
+  declarations: [UsersPage,CreateEditComponent]
+})
+export class UsersPageModule {}

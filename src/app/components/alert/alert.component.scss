@@ -1,0 +1,82 @@
+// alerta
+.alert-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.alert-box {
+  padding: 25px;
+  text-align: center;
+}
+
+ion-icon {
+  font-size: 70px;
+  margin-bottom: 15px;
+}
+
+p {
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+// Contenedor principal del componente
+.alert-wrapper {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+
+  .icon-circle {
+    width: 72px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    margin-bottom: 16px;
+
+    ion-icon {
+      font-size: 2.8rem;
+      margin-bottom: 0; // Quitamos el margen que tenías antes
+    }
+
+    &.success { background: #f0fdf4; ion-icon { color: #22c55e; } }
+    &.error { background: #fef2f2; ion-icon { color: #ef4444; } }
+    &.warning { background: #fffbeb; ion-icon { color: #f59e0b; } }
+  }
+}
+
+/* Botón estilizado MANUALMENTE (Misma estética que el resto) */
+.alert-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 140px;      /* Controlamos el ancho para que no sea gigante */
+  height: 44px;          /* Equivalente a h-11 */
+  background-color: #0f172a; /* Slate 900 */
+  color: white;
+  border-radius: 12px;   /* Redondeado XL acorde a tu app */
+  font-size: 11px;
+  font-weight: 900;      /* font-black */
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  &:hover { background-color: #1e293b; }
+  &:active { transform: scale(0.95); }
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}

@@ -1,0 +1,236 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="admin-toolbar">
+    <div class="page-header-container">
+      <div class="header-info">
+        <h1>EDUMEX <span>Almacen</span></h1>
+        <p class="text-slate-500 text-sm mt-1">Gestión operativa de inventario y control de almacén</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="hidden md:flex bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+          <span class="text-emerald-600 text-[10px] font-black uppercase tracking-widest">En Línea</span>
+        </div>
+        <button (click)="logout()" class="bg-red-50 text-red-600 p-2.5 rounded-xl hover:bg-red-600 hover:text-white transition-all">
+          <ion-icon name="power-outline" class="text-xl"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-slate-50">
+  <div class="p-6">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+<!--      <div (click)="openMovementModal('input')"-->
+<!--           class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-emerald-500 transition-all cursor-pointer group">-->
+<!--        <div class="flex items-center gap-4">-->
+<!--          <div class="bg-emerald-500 text-white p-4 rounded-xl shadow-lg shadow-emerald-200 group-hover:scale-110 transition-transform">-->
+<!--            <ion-icon name="add-outline" class="text-2xl font-bold"></ion-icon>-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <h3 class="text-navy font-black text-sm uppercase tracking-widest">Entrada</h3>-->
+<!--            <p class="text-slate-400 text-[10px] font-bold">Ingreso de mercancía</p>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      <div (click)="openMovementModal('output')"-->
+<!--           class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-orange-500 transition-all cursor-pointer group">-->
+<!--        <div class="flex items-center gap-4">-->
+<!--          <div class="bg-orange-500 text-white p-4 rounded-xl shadow-lg shadow-orange-200 group-hover:scale-110 transition-transform">-->
+<!--            <ion-icon name="remove-outline" class="text-2xl font-bold"></ion-icon>-->
+<!--          </div>-->
+<!--          <div>-->
+<!--            <h3 class="text-navy font-black text-sm uppercase tracking-widest">Salida</h3>-->
+<!--            <p class="text-slate-400 text-[10px] font-bold">Egreso / Despacho</p>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+
+      <div [routerLink]="['/warehouseman/orders']"
+           class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-500 transition-all cursor-pointer group">
+        <div class="flex items-center gap-4">
+          <div class="bg-blue-500 text-white p-4 rounded-xl shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
+            <ion-icon name="receipt-outline" class="text-2xl font-bold"></ion-icon>
+          </div>
+          <div>
+            <h3 class="text-navy font-black text-sm uppercase tracking-widest">Órdenes</h3>
+            <p class="text-slate-400 text-[10px] font-bold">Pedidos por surtir</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mb-8" *ngIf="pendingOrders.length > 0">
+      <div class="flex items-center gap-2 mb-4 ml-2">
+        <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
+        <h3 class="text-navy font-black text-[10px] uppercase tracking-[0.2em]">Entradas por Confirmar</h3>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div *ngFor="let order of pendingOrders" class="bg-white rounded-3xl p-5 border-2 border-blue-100 shadow-md transition-all">
+
+          <div class="flex justify-between items-start mb-3">
+          <span class="text-[9px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg uppercase">
+            {{ order.po_number }}
+          </span>
+            <span class="text-[8px] font-bold text-slate-400 uppercase italic">{{ order.created_at | date:'dd MMM' }}</span>
+          </div>
+
+          <div class="space-y-2">
+            <div *ngFor="let item of order.items"
+                 (click)="item.status !== 'completed' && receiveBookFromOrder(order, item,'purchase_order')"
+                 [class.opacity-50]="item.status === 'completed'"
+                 [class.pointer-events-none]="item.status === 'completed'"
+                 class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-dashed border-slate-200 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all group">
+
+              <div class="flex flex-col">
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] font-black text-navy uppercase group-hover:text-blue-600">{{ item.book.title }}</span>
+                  <span *ngIf="item.status === 'completed'" class="bg-emerald-100 text-emerald-600 text-[7px] px-1.5 py-0.5 rounded-full font-black uppercase">Procesado</span>
+                </div>
+              </div>
+
+              <span class="font-black text-xs"
+                    [class.text-emerald-600]="item.status === 'completed'"
+                    [class.text-blue-600]="item.status !== 'completed'">
+                {{ item.status === 'completed' ? 'COMPLETADO' : 'x' + item.quantity }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mb-8" *ngIf="pendingOutputs.length > 0">
+      <div class="flex items-center gap-2 mb-4 ml-2">
+        <div class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+        <h3 class="text-navy font-black text-[10px] uppercase tracking-[0.2em]">Salidas por Surtir</h3>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div *ngFor="let out of pendingOutputs"
+             class="bg-white rounded-3xl p-5 border-2 border-orange-100 shadow-md transition-all group">
+
+          <div class="flex justify-between items-start mb-3">
+        <span class="text-[9px] font-black text-orange-600 bg-orange-50 px-2 py-1 rounded-lg uppercase">
+          {{ out.order_number }}
+        </span>
+            <span class="text-[8px] font-bold text-slate-400 uppercase">{{ out.reason }}</span>
+          </div>
+
+          <div class="space-y-2">
+            <div *ngFor="let item of out.items"
+                 (click)="item.status !== 'completed' && receiveBookFromOrder(out, item, 'output_order')"
+                 [class.opacity-40]="item.status === 'completed'"
+                 [class.pointer-events-none]="item.status === 'completed'"
+                 class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-dashed border-slate-200 hover:border-orange-500 hover:bg-orange-50 cursor-pointer transition-all">
+
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-black text-navy uppercase">{{ item.book.title }}</span>
+                <ion-icon *ngIf="item.status === 'completed'" name="checkmark-done-circle" class="text-emerald-500 text-sm"></ion-icon>
+              </div>
+
+              <span class="font-black text-xs"
+                    [class.text-emerald-600]="item.status === 'completed'"
+                    [class.text-orange-600]="item.status !== 'completed'">
+            {{ item.status === 'completed' ? 'COMPLETADO' : 'x' + item.quantity }}
+          </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white border border-slate-200 shadow-sm overflow-hidden">
+      <div class="p-4 bg-slate-100/50 border-b border-slate-200 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <ion-icon name="list-circle" class="text-blue-500 text-xl"></ion-icon>
+            <h3 class="text-navy font-black text-[10px] uppercase tracking-[0.2em]">Bitácora de Hoy</h3>
+          </div>
+
+          <div class="flex items-center bg-white border border-slate-200 rounded-full px-2 py-1 gap-2">
+            <span class="text-[8px] font-black uppercase text-slate-400 ml-1">Mis movimientos</span>
+            <ion-toggle mode="ios"
+                        [(ngModel)]="showOnlyMine"
+                        (ionChange)="toggleFilter()"
+                        color="primary">
+            </ion-toggle>
+          </div>
+        </div>
+
+        <button (click)="loadRecentMovements()" class="text-slate-400 hover:text-navy">
+          <ion-icon name="refresh-outline" class="text-lg"></ion-icon>
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full border-separate border-spacing-0">
+          <thead>
+          <tr class="bg-slate-50">
+            <th class="px-6 py-4 text-left text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200">Usuario / Material</th>
+            <th class="px-6 py-4 text-center text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200">Ubicación</th>
+            <th class="px-6 py-4 text-center text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200">Cant.</th>
+            <th class="px-6 py-4 text-center text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200">Tipo</th>
+            <th class="px-6 py-4 text-center text-[9px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200">Hora</th>
+          </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+          <tr *ngFor="let m of displayMovements" class="hover:bg-blue-50/30 transition-colors">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="bg-blue-600 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase">
+                    {{ m.user?.name }}
+                </span>
+                <span class="text-[11px] font-black text-navy uppercase">{{ m.book?.title }}</span>
+              </div>
+              <span *ngIf="m.reference_id" class="text-[7px] bg-slate-100 text-slate-500 px-1 rounded font-black uppercase">
+              Orden #{{ m.reference_id }}
+            </span>
+              <div *ngIf="m.description" class="text-[9px] text-slate-400 italic mt-0.5">"{{ m.description }}"</div>
+            </td>
+            <td class="px-6 py-4 text-center">
+              <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold">{{ m.location?.code }}</span>
+            </td>
+            <td class="px-6 py-4 text-center">
+              <span [class]="m.type === 'input' ? 'text-emerald-600' : 'text-orange-600'" class="font-black text-sm">
+                {{ m.type === 'input' ? '+' : '-' }}{{ m.quantity }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-center">
+              <span [class]="m.type === 'input' ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'"
+                    class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest">
+                {{ m.type }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-center">
+              <span class="text-slate-400 text-[10px] font-bold">{{ m.created_at | date:'HH:mm' }}</span>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+          Página {{ currentPage }} de {{ lastPage }}
+        </div>
+        <div class="flex gap-2">
+          <button (click)="changePage(false)" [disabled]="currentPage === 1"
+                  class="p-2 border border-slate-200 rounded-lg disabled:opacity-30 bg-white">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+          </button>
+          <button (click)="changePage(true)" [disabled]="currentPage === lastPage"
+                  class="p-2 border border-slate-200 rounded-lg disabled:opacity-30 bg-white">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ion-refresher slot="fixed" (ionRefresh)="loadRecentMovements()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+</ion-content>

@@ -1,0 +1,105 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="modal-toolbar">
+    <ion-title class="modal-title">
+      Movimiento <span [class]="type === 'input' ? 'text-emerald-500' : 'text-orange-500'">Manual</span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()" class="close-btn">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-slate-50">
+  <div class="p-6">
+    <form [formGroup]="form" class="space-y-6">
+
+      <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-5">
+
+        <div class="form-group">
+          <label class="form-label">Libro / Material</label>
+          <div class="input-wrapper">
+            <ion-icon name="book-outline" class="input-icon text-blue-500"></ion-icon>
+            <ion-select formControlName="book_id" interface="action-sheet" placeholder="Seleccionar libro">
+              <ion-select-option *ngFor="let book of books" [value]="book.id">
+                [{{ book.level }}] {{ book.title }}
+              </ion-select-option>
+            </ion-select>
+          </div>
+        </div>
+
+        <hr class="border-slate-100">
+
+        <div class="grid grid-cols-12 gap-3 items-end bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <div class="col-span-12 md:col-span-7">
+            <label class="form-label !text-[9px]">Pallet / Estante</label>
+            <div class="input-wrapper bg-white">
+              <ion-select formControlName="temp_location_id" placeholder="Seleccionar ubicación">
+                <ion-select-option *ngFor="let loc of availableLocations" [value]="loc.id">
+                  {{ loc.code }}
+                  <ng-container *ngIf="type === 'output'"> — STOCK: {{ loc.current_stock || 0 }}</ng-container>
+                  <ng-container *ngIf="type === 'input'"> — LIBRE: {{ (loc.max_capacity || 0) - (loc.current_capacity || 0) }}</ng-container>
+                </ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+
+          <div class="col-span-8 md:col-span-3">
+            <label class="form-label !text-[9px]">Cant.</label>
+            <div class="input-wrapper bg-white">
+              <ion-input type="number" formControlName="temp_quantity" class="text-center font-black"></ion-input>
+            </div>
+          </div>
+
+          <div class="col-span-4 md:col-span-2">
+            <button type="button" (click)="addDistribution()"
+
+                    class="w-full h-[48px] submit-modal-btn !shadow-lg rounded-xl shadow-md active:scale-95 transition-all flex items-center justify-center">
+              <ion-icon name="add" class="text-2xl text-white"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="distributions.length > 0" class="space-y-2">
+          <label class="form-label">Distribución actual</label>
+          <div *ngFor="let dist of distributions; let i = index" class="flex justify-between items-center p-3 bg-white border border-slate-100 rounded-xl shadow-sm animate__animated animate__fadeIn">
+            <span class="text-[10px] font-black text-navy uppercase">Pallet: {{ dist.location_code }}</span>
+            <div class="flex items-center gap-4">
+              <span class="text-sm font-black" [class]="type === 'input' ? 'text-emerald-600' : 'text-orange-600'">
+                {{ dist.quantity }} uds.
+              </span>
+              <button type="button" (click)="removeDistribution(i)" class="text-red-400 hover:text-red-600 transition-colors">
+                <ion-icon name="trash-outline" class="text-lg"></ion-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Motivo / Observaciones</label>
+          <div class="input-wrapper !items-start py-3">
+            <ion-textarea formControlName="description" rows="2" placeholder="Describa el motivo..."></ion-textarea>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button type="button" class="flex-1 py-4 px-6 rounded-2xl border border-slate-200 text-slate-500 font-bold" (click)="close()">
+          Cancelar
+        </button>
+
+        <button (click)="submit()"
+                [disabled]="isSubmitting || !isFormReadyToSubmit"
+                class="submit-modal-btn group flex-[2] !shadow-lg btn-approve disabled:opacity-50">
+          <span *ngIf="!isSubmitting" class="flex items-center justify-center gap-2">
+            Confirmar {{ type === 'input' ? 'Ingreso' : 'Salida' }}
+          </span>
+          <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</ion-content>

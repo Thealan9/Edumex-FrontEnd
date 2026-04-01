@@ -1,0 +1,47 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="modal-toolbar">
+    <ion-title class="modal-title">
+      {{ isEdit ? 'Editar' : 'Nuevo' }} <span>Estante</span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()" class="close-btn">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="form-content">
+  <div class="p-6">
+    <form [formGroup]="form" class="space-y-6">
+      <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-5">
+
+        <div class="form-group">
+          <label class="form-label">Código / Identificador</label>
+          <div class="input-wrapper">
+            <ion-icon name="qr-code-outline" class="input-icon"></ion-icon>
+            <ion-input type="text" formControlName="code" placeholder="Ej: ESTANTE-A1" class="custom-input"></ion-input>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Capacidad Máxima (Unidades)</label>
+          <div class="input-wrapper">
+            <ion-icon name="apps-outline" class="input-icon"></ion-icon>
+            <ion-input type="number" formControlName="max_capacity" placeholder="Ej: 500" class="custom-input"></ion-input>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-2 px-1 italic">
+            * Define cuántos libros físicos caben en esta sección para evitar sobrecupo.
+          </p>
+        </div>
+
+      </div>
+
+      <button class="submit-modal-btn group disabled:opacity-50" (click)="submit()" [disabled]="form.invalid || isSubmitting">
+        <span>{{ isEdit ? 'Actualizar Capacidad' : 'Crear Estante' }}</span>
+        <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+        <ion-icon *ngIf="!isSubmitting" name="save-outline" class="group-hover:scale-110 transition-transform"></ion-icon>
+      </button>
+    </form>
+  </div>
+</ion-content>

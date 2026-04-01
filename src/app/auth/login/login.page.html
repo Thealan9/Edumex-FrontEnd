@@ -1,0 +1,94 @@
+<ion-content class="login-page">
+
+  <div class="login-split">
+
+    <!-- Panel izquierdo: Branding -->
+    <div class="brand-panel">
+      <div class="brand-overlay"></div>
+      <div class="brand-content">
+        <img src="assets/logo-educamex.png" alt="EDUCAMEX" class="brand-logo">
+        <h2 class="brand-tagline">Tu puerta al conocimiento</h2>
+        <p class="brand-desc">Distribución de libros educativos</p>
+        <div class="brand-features">
+          <div class="feature-item">
+            <a routerLink="/home">
+              <ion-icon name="home-outline"></ion-icon>
+              <span> Regresar al Inicio</span>
+            </a>
+          </div>
+<!--          <div class="feature-item">-->
+<!--            <ion-icon name="cube-outline"></ion-icon>-->
+<!--            <span>Gestión de inventario</span>-->
+<!--          </div>-->
+<!--          <div class="feature-item">-->
+<!--            <ion-icon name="analytics-outline"></ion-icon>-->
+<!--            <span>Reportes en tiempo real</span>-->
+<!--          </div>-->
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel derecho: Formulario -->
+    <div class="form-panel">
+      <div class="form-wrapper">
+
+        <div class="mobile-logo">
+          <img src="assets/logo-educamex.png" alt="EDUCAMEX">
+        </div>
+
+        <div class="text-intro">
+          <h1>Bienvenido</h1>
+          <p>Ingresa tus credenciales para continuar</p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="login()" class="login-form">
+
+          <div class="input-group" [class.active]="focusedField === 'email'" [class.error]="form.get('email')?.invalid && form.get('email')?.touched">
+            <label>Correo Electrónico</label>
+            <div class="input-box">
+              <ion-icon name="mail-outline"></ion-icon>
+              <input
+                type="email"
+                formControlName="email"
+                placeholder="ejemplo@edumex.com"
+                (focus)="focusedField = 'email'"
+                (blur)="focusedField = ''">
+            </div>
+          </div>
+
+          <div class="input-group" [class.active]="focusedField === 'password'" [class.error]="form.get('password')?.invalid && form.get('password')?.touched">
+            <div class="label-split">
+              <label>Contraseña</label>
+            </div>
+            <div class="input-box">
+              <ion-icon name="lock-closed-outline"></ion-icon>
+              <input
+                [type]="passwordType"
+                formControlName="password"
+                placeholder="••••••••••••"
+                (focus)="focusedField = 'password'"
+                (blur)="focusedField = ''">
+
+              <button type="button" class="eye-btn" (click)="togglePassword()">
+                <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="hero-button" [disabled]="isSubmitting || form.invalid">
+            <span *ngIf="!isSubmitting">INGRESAR AHORA</span>
+            <div class="loader" *ngIf="isSubmitting"></div>
+          </button>
+
+          <p class="text-center text-sm text-slate-500 pt-4">
+            ¿No tienes cuenta? <a routerLink="/register" class="text-blue-600 font-bold">Registrate aquí</a>
+          </p>
+        </form>
+
+
+      </div>
+    </div>
+
+  </div>
+
+</ion-content>

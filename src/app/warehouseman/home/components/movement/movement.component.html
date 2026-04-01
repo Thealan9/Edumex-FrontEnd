@@ -1,0 +1,98 @@
+<ion-content class="form-content">
+  <div class="p-6">
+    <div *ngIf="pendingOrderData" class="mb-6 p-5 rounded-[2rem] shadow-lg text-white transition-colors"
+         [ngClass]="remainingQuantity === 0 ? 'bg-emerald-500 shadow-emerald-200' : 'bg-blue-600 shadow-blue-200'">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-[9px] font-black uppercase tracking-widest opacity-80">Total a Ubicar: {{ pendingOrderData.quantity }}</span>
+        <ion-icon [name]="remainingQuantity === 0 ? 'checkmark-circle' : 'cube-outline'" class="text-xl"></ion-icon>
+      </div>
+      <p class="text-xs font-bold" *ngIf="remainingQuantity > 0">Faltan <span class="text-lg font-black">{{ remainingQuantity }}</span> unidades.</p>
+      <p class="text-sm font-black uppercase" *ngIf="remainingQuantity === 0">Distribución Completa</p>
+    </div>
+
+    <form [formGroup]="form" class="space-y-6">
+      <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-5">
+
+        <div class="form-group">
+          <label class="form-label">Libro / Material</label>
+          <div class="input-wrapper" [class.opacity-50]="pendingOrderData">
+            <ion-icon name="book-outline" class="input-icon text-blue-500"></ion-icon>
+            <ion-select formControlName="book_id" interface="action-sheet" class="custom-select">
+              <ion-select-option *ngFor="let book of books" [value]="book.id">[{{ book.level }}] {{ book.title }}</ion-select-option>
+            </ion-select>
+          </div>
+        </div>
+
+        <hr class="border-slate-100">
+
+        <div *ngIf="remainingQuantity > 0 || !pendingOrderData" class="grid grid-cols-12 gap-3 items-end bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <div class="col-span-12 md:col-span-7">
+            <label class="form-label !text-[9px]">Pallet / Estante</label>
+            <div class="input-wrapper bg-white">
+              <ion-select formControlName="temp_location_id" placeholder="Seleccionar ubicación">
+                <ion-select-option *ngFor="let loc of availableLocations" [value]="loc.id">
+                  {{ loc.code }}
+                  <ng-container *ngIf="type === 'output' || pendingOrderData?.type === 'output_order'">
+                    — STOCK: {{ loc.current_stock || 0 }} uds.
+                  </ng-container>
+                  <ng-container *ngIf="type === 'input' && pendingOrderData?.type !== 'output_order'">
+                    — LIBRE: {{ (loc.max_capacity || 0) - (loc.current_capacity || 0) }} uds.
+                  </ng-container>
+                </ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+
+          <div class="col-span-8 md:col-span-3">
+            <label class="form-label !text-[9px]">Cant.</label>
+            <div class="input-wrapper bg-white">
+              <ion-input type="number" formControlName="temp_quantity" class="custom-input font-black text-center"></ion-input>
+            </div>
+          </div>
+
+          <div class="col-span-4 md:col-span-2">
+            <label class="form-label !text-transparent md:block hidden">_</label>
+            <button
+              type="button"
+              (click)="addDistribution()"
+              class="w-full h-[48px] submit-modal-btn !shadow-lg rounded-xl flex items-center justify-center shadow-md active:scale-95 transition-all opacity-100 !visible">
+              <ion-icon name="add" class="text-2xl text-slate-500 font-bold"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="distributions.length > 0" class="space-y-2 mt-4">
+          <label class="form-label">Resumen de Distribución</label>
+          <div *ngFor="let dist of distributions; let i = index" class="flex justify-between items-center p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
+            <span class="text-[10px] font-black text-emerald-700 uppercase">Pallet: {{ dist.location_code }}</span>
+            <div class="flex items-center gap-4">
+              <span class="text-sm font-black text-navy">{{ dist.quantity }} und.</span>
+              <button type="button" (click)="removeDistribution(i)" class="text-red-400 hover:text-red-600">
+                <ion-icon name="trash-outline" class="text-lg"></ion-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Detalles</label>
+          <div class="input-wrapper !items-start py-3">
+            <ion-textarea formControlName="description" rows="2" class="text-sm"></ion-textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button type="button" class="flex-1 py-4 px-6 rounded-2xl border border-slate-200 text-slate-500 font-bold" (click)="close()">Cancelar</button>
+
+        <button
+          (click)="submit()"
+          [disabled]="isSubmitting || distributions.length === 0 || !isFormReadyToSubmit"
+          class="submit-modal-btn group flex-[2] !shadow-lg btn-approve disabled:opacity-50">
+          <span *ngIf="!isSubmitting">Procesar {{ type === 'input' ? 'Ingreso' : 'Salida' }}</span>
+          <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+        </button>
+      </div>
+    </form>
+  </div>
+</ion-content>

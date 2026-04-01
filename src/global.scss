@@ -1,0 +1,324 @@
+// custom components at https://material.angular.dev/guide/theming
+@import "tailwindcss";
+
+/* IDENTIDAD VISUAL EDUMEX */
+@theme {
+  --color-edumex-navy: #181848;
+  --color-edumex-blue: #304878;
+  --color-edumex-gold: #F0A818;
+  --color-edumex-gray: #7890A8;
+  --color-edumex-light: #F0F4F8;
+}
+
+:root {
+  color-scheme: light only !important;
+  --edumex-bg-main: #F0F4F8;
+  --edumex-bg-toolbar: #ffffff;
+  --edumex-text-title: #181848;
+  --edumex-navy: #181848;
+  --edumex-blue: #304878;
+  --edumex-gold: #F0A818;
+  --edumex-gray: #7890A8;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ion-background-color: #F0F4F8 !important;
+    --ion-text-color: #181848 !important;
+    --ion-toolbar-background: #ffffff !important;
+    --ion-item-background: #ffffff !important;
+    --ion-card-background: #ffffff !important;
+  }
+}
+/* Aplicación global al contenido sin scroll nativo */
+ion-content {
+  --background: var(--edumex-bg-main);
+  --height: 100%;
+  --overflow: hidden;
+
+  &::part(scroll) {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+.page-header-container {
+  background-color: var(--edumex-bg-main);
+  @apply flex flex-col md:flex-row md:items-center justify-between gap-4 px-6 pt-6 pb-6;
+
+  .header-info {
+    h1 {
+      @apply text-3xl font-light tracking-tight;
+      color: var(--edumex-navy);
+      span { @apply font-bold; color: var(--edumex-gold); }
+    }
+    p { @apply text-sm mt-1; color: var(--edumex-gray); }
+  }
+}
+
+.admin-toolbar {
+  --background: var(--edumex-bg-main);
+  --border-style: none;
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+}
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+@import "@ionic/angular/css/palettes/dark.system.css";
+
+/* FORZAR MODO CLARO */
+html {
+  color-scheme: light only !important;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+  font-family: 'Montserrat', Roboto, sans-serif;
+  background-color: var(--edumex-bg-main);
+}
+
+#main-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+router-outlet + * {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+/* SNACKBARS PERSONALIZADOS */
+.snackbar-success .mdc-snackbar__surface { background-color: #16a34a !important; }
+.snackbar-error .mdc-snackbar__surface { background-color: #dc2626 !important; }
+.snackbar-warning .mdc-snackbar__surface { background-color: var(--edumex-gold) !important; }
+.snackbar-success .mdc-snackbar__label, .snackbar-error .mdc-snackbar__label { color: white !important; }
+
+/* ALERT COMPONENT */
+.small-alert-modal {
+  --width: 280px !important;
+  --height: auto !important;
+  --max-height: 90%;
+  --border-radius: 24px;
+
+  &::part(content) {
+    border-radius: 24px;
+    box-shadow: 0 20px 25px -5px rgba(24, 24, 72, 0.1);
+  }
+}
+
+/* TABLAS Y DATA CARDS */
+.data-card {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  border: 1px solid #e8ecf0;
+  box-shadow: 0 4px 6px -1px rgba(24, 24, 72, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--edumex-blue), var(--edumex-gold));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: var(--edumex-blue);
+    box-shadow: 0 20px 25px -5px rgba(24, 24, 72, 0.1);
+    &::before { opacity: 1; }
+  }
+}
+
+.data-field {
+  .label { @apply text-[10px] uppercase font-bold tracking-tight mb-0.5; color: var(--edumex-gray); }
+  .value { @apply text-sm font-bold; color: var(--edumex-navy); }
+}
+
+/* BADGES DE ESTADO */
+.status-badge {
+  @apply px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter;
+  &.available, &.completado { background: #dcfce7; color: #166534; }
+  &.pending, &.pendiente { background: #FDF8EF; color: #B07800; }
+  &.error, &.vacio { background: #fee2e2; color: #991b1b; }
+}
+
+/* BOTONES DE ACCIÓN */
+.action-btn-edit {
+  @apply flex items-center gap-2 rounded-xl text-xs font-bold transition-all px-4 py-2;
+  background: var(--edumex-bg-main);
+  color: var(--edumex-blue);
+  &:hover { background: var(--edumex-blue); color: white; }
+}
+
+/* LIBROS */
+.book-row {
+  display: flex;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  &:hover { border-color: var(--edumex-gold); box-shadow: 0 10px 20px -5px rgba(24, 24, 72, 0.1); }
+}
+
+.book-spine { width: 6px; height: 100%; transition: width 0.3s ease; }
+.book-row:hover .book-spine { width: 12px; }
+
+.book-action-btn {
+  @apply flex items-center justify-center w-10 h-10 rounded-full border border-slate-100 bg-white transition-all;
+  color: var(--edumex-gray);
+  &:hover { background: #e8f0ff; color: var(--edumex-blue); border-color: var(--edumex-blue); }
+}
+
+.add-book-btn {
+  @apply flex items-center gap-2 text-white px-5 py-2.5 rounded-xl font-semibold transition-all;
+  background: var(--edumex-navy);
+  &:hover { background: var(--edumex-blue); transform: translateY(-1px); }
+}
+
+/* SPINNERS */
+ion-spinner[name="lines-sharp"] { --color: var(--edumex-gold); width: 45px; height: 45px; }
+
+/* MODAL / FORMULARIOS PREMIUM */
+.modal-toolbar {
+  --background: #ffffff;
+  --color: var(--edumex-navy);
+  padding: 12px 20px;
+  border-bottom: 1px solid #f0f4f8;
+  .modal-title { font-weight: 600; span { color: var(--edumex-gold); font-weight: 900; } }
+}
+
+.input-wrapper {
+  gap: 8px;
+  @apply flex items-center border-2 rounded-2xl px-4 py-1 transition-all duration-200;
+  background: white; border-color: #e8ecf0;
+  &:focus-within { border-color: var(--edumex-gold); background: #FFFDF8; .input-icon { color: var(--edumex-gold); } }
+  .input-icon { color: var(--edumex-gray); }
+  .custom-input { --color: var(--edumex-navy); font-weight: 600; }
+}
+
+.submit-modal-btn {
+  @apply flex items-center justify-center gap-3 w-full py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all;
+  background: linear-gradient(135deg, var(--edumex-gold) 0%, #E89800 100%);
+  color: var(--edumex-navy);
+  box-shadow: 0 8px 20px -4px rgba(240, 168, 24, 0.35);
+}
+
+/* PALETAS TIPO TAILWIND */
+.bg-green-500 { background-color: #22c55e !important; }
+.bg-blue-500 { background-color: var(--edumex-blue) !important; }
+.bg-orange-500 { background-color: var(--edumex-gold) !important; }
+.bg-red-500 { background-color: #ef4444 !important; }
+
+/* ALERTAS Y ACTION SHEETS */
+.edumex-alert {
+  --background: #ffffff;
+  .alert-title { color: var(--edumex-navy) !important; font-weight: 900 !important; }
+  .alert-button:last-child { color: var(--edumex-gold) !important; }
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+ion-toggle {
+  --handle-height: 14px;
+  --handle-width: 14px;
+  --track-height: 18px;
+  --track-width: 32px;
+  margin: 0;
+}
+.group:hover {
+  border-color: var(--edumex-gold-light);
+}
+.custom-mini-select {
+  --padding-start: 4px;
+  --padding-end: 4px;
+  min-height: 28px;
+
+  &::part(text) {
+    font-size: 10px;
+    font-weight: 900;
+  }
+}
+.report-row {
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f8fafc;
+  }
+}
+
+
+tbody tr:first-child td:first-child { border-top-left-radius: 2.5rem; }
+tbody tr:first-child td:last-child { border-top-right-radius: 2.5rem; }
+
+
+th {
+  background-color: #f1f5f9;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+
+.book-modal {
+  --width: 100%;
+  --height: 100%;
+  --border-radius: 0;
+
+  @media (min-width: 992px) {
+    --width: 90%;
+    --max-width: 1000px;
+    --height: 85%;
+    --max-height: 800px;
+    --border-radius: 0px;
+
+    &::part(content) {
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+  }
+}
+
+
+// ELIMINAR LA LINEA DE LOS INPUT
+//ion-input,
+//ion-select,
+//ion-textarea {
+//  --highlight-height: 0px !important;
+//  --show-full-highlight: 0 !important;
+//  --inner-highligh-height: 0px !important; // Algunos componentes usan esta variante
+//}

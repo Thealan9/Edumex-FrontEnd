@@ -1,0 +1,135 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="bg-white border-b border-slate-100">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="text-slate-600">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
+      Detalles del {{ book?.type === 'ebook' ? 'Ebook' : 'Libro' }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-white">
+  <div *ngIf="isLoading" class="p-12 animate-pulse max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12">
+    <div class="md:col-span-4 h-96 bg-slate-100 rounded-lg"></div>
+    <div class="md:col-span-8 space-y-4">
+      <div class="h-10 bg-slate-100 rounded w-3/4"></div>
+      <div class="h-32 bg-slate-100 rounded w-full"></div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && book" class="max-w-7xl mx-auto p-6 lg:p-12">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-20">
+
+      <div class="md:col-span-4 lg:col-span-3">
+        <div class="md:sticky md:top-12 flex flex-col items-center">
+          <div class="relative w-[260px] h-[380px] sm:w-[280px] sm:h-[400px] flex items-center justify-center shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] rounded-sm overflow-hidden border border-slate-100 bg-white">
+            <img [src]="book.image_url" class="w-[94%] h-[100%] object-cover object-top transform select-none">
+            <div class="absolute inset-y-0 left-0 w-1.5 bg-black/10 blur-[1px]"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="md:col-span-5 lg:col-span-6 space-y-12">
+        <div>
+          <h1 class="!text-3xl lg:!text-4xl font-serif font-bold text-slate-900 !leading-[1.1] tracking-tight block">{{ book.title }}</h1>
+          <h2 class="!text-[11px] font-black text-slate-400 uppercase tracking-[0.5em] mt-4 ml-1 block opacity-80">{{ book.autor }}</h2>
+        </div>
+
+        <section>
+          <div class="flex items-center gap-4 mb-6">
+            <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">Sinopsis</h3>
+            <div class="h-[1px] flex-1 bg-slate-100"></div>
+          </div>
+          <p class="text-slate-600 leading-relaxed text-justify text-base font-normal">
+            {{ book.description || 'No hay una sinopsis disponible para este material.' }}
+          </p>
+        </section>
+
+        <section class="grid grid-cols-2 gap-x-12 gap-y-8 pt-4">
+          <div class="flex flex-col border-l-2 border-slate-100 pl-4">
+            <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Editorial</span>
+            <span class="text-sm font-bold text-slate-700">{{ book.supplier }}</span>
+          </div>
+          <div class="flex flex-col border-l-2 border-slate-100 pl-4">
+            <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Año de edición</span>
+            <span class="text-sm font-bold text-slate-700">{{ book.year }}</span>
+          </div>
+          <div class="flex flex-col border-l-2 border-slate-100 pl-4">
+            <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Materia</span>
+            <span class="text-sm font-bold text-slate-700">{{ book.category }}</span>
+          </div>
+          <div class="flex flex-col border-l-2 border-slate-100 pl-4">
+            <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">ISBN</span>
+            <span class="text-sm font-bold text-slate-700">{{ book.isbn }}</span>
+          </div>
+          <div class="flex flex-col border-l-2 border-slate-100 pl-4">
+            <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Páginas</span>
+            <span class="text-sm font-bold text-slate-700">{{ book.pages }}</span>
+          </div>
+          <div class="flex flex-col border-l-2 border-slate-100 pl-4">
+            <span class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Edición</span>
+            <span class="text-sm font-bold text-slate-700">{{ book.edition }}° Edición</span>
+          </div>
+        </section>
+      </div>
+
+      <div class="md:col-span-3 lg:col-span-3">
+        <div class="md:sticky md:top-12 space-y-6">
+          <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.06)]">
+
+            <div class="flex flex-col items-center text-center mb-8">
+              <div class="flex items-baseline gap-1">
+                <span class="text-3xl font-black text-[#181848] tracking-tighter">${{ book.price_unit }}</span>
+                <span class="text-xs font-bold text-slate-400 uppercase">mxn</span>
+              </div>
+            </div>
+
+            <button (click)="addToCart(book, 'unit')"
+                    [disabled]="book.total_stock! <= 0"
+                    class="btn-cart-primary">
+              <span>{{ book.type === 'ebook' ? 'Comprar Ebook' : 'Añadir a mi bolsa' }}</span>
+            </button>
+
+            <div *ngIf="book.type === 'physical' && user?.customer_type === 'institutional' && book.price_package" class="mt-8">
+              <div class="relative p-7 rounded-[2rem] bg-slate-50 border border-slate-100 flex flex-col items-center">
+                <div class="text-center mt-3 mb-5">
+                  <div class="flex items-baseline justify-center gap-1">
+                    <span class="text-2xl font-black text-slate-800">${{ book.price_package }}</span>
+                    <span class="text-[10px] font-bold text-slate-400">MXN</span>
+                  </div>
+                  <p class="text-[8px] font-black text-blue-600 uppercase tracking-widest mt-2 bg-blue-50 px-2 py-0.5 rounded">
+                    Pack {{ book.units_per_package }} Unidades
+                  </p>
+                </div>
+                <button (click)="addToCart(book, 'package')"
+                        [disabled]="book.total_stock! < book.units_per_package"
+                        class="btn-cart-secondary">
+                  Adquirir Pack
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-8 flex items-center justify-center gap-3 py-3 border-t border-slate-50">
+              <ion-icon [name]="book.type === 'ebook' ? 'cloud-download-outline' : 'airplane-outline'"
+                        class="text-orange-500 text-lg"></ion-icon>
+              <div class="flex flex-col">
+                <span class="text-[9px] font-black text-slate-800 uppercase tracking-tighter leading-none">
+                  {{ book.type === 'ebook' ? 'Descarga Digital' : 'Envío Gratis' }}
+                </span>
+                <span class="text-[8px] text-slate-400 font-bold uppercase mt-1">
+                  {{ book.type === 'ebook' ? 'Disponible tras el pago' : 'Desde $299.00' }}
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ion-content>

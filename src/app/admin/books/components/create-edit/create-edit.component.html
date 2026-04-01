@@ -1,0 +1,147 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="px-4 py-2">
+    <ion-title class="font-black text-xl text-slate-800">
+      {{ isEdit ? 'Editar' : 'Nuevo' }} <span class="text-blue-600">Libro</span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()" class="bg-slate-100 rounded-full text-slate-600">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-slate-50">
+  <div class="p-4 md:p-8 max-w-6xl mx-auto">
+    <form [formGroup]="form" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+      <div class="lg:col-span-4 space-y-6">
+
+        <div class="bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-100">
+          <label class="text-[10px] font-black uppercase text-slate-400 mb-3 block ml-2">Portada</label>
+          <div (click)="fileInput.click()" class="relative aspect-[3/4] rounded-3xl bg-slate-50 border-2 border-dashed border-slate-200 flex flex-col items-center justify-center overflow-hidden group cursor-pointer transition-all">
+            <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)" accept="image/*">
+            <img *ngIf="imagePreview || data?.image_url" [src]="imagePreview || data?.image_url" class="w-full h-full object-cover">
+            <div *ngIf="!imagePreview && !data?.image_url" class="text-center">
+              <ion-icon name="cloud-upload-outline" class="text-4xl text-slate-300"></ion-icon>
+              <p class="text-[10px] font-bold text-slate-400 uppercase mt-2">Subir Imagen</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-4">
+          <label class="text-[10px] font-black uppercase text-slate-400 block ml-1">Precios y Stock</label>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-100">
+              <label class="text-[9px] font-bold text-emerald-600 uppercase">P. Unitario</label>
+              <ion-input type="number" formControlName="price_unit" class="font-black text-emerald-700"></ion-input>
+            </div>
+            <div class="bg-blue-50 p-3 rounded-2xl border border-blue-100">
+              <label class="text-[9px] font-bold text-blue-600 uppercase">P. Paquete</label>
+              <ion-input type="number" formControlName="price_package" class="font-black text-blue-700"></ion-input>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-slate-50 p-3 rounded-2xl">
+              <label class="text-[9px] font-bold text-slate-500 uppercase">Cant x Paquete</label>
+              <ion-input type="number" formControlName="units_per_package" class="font-bold text-slate-700"></ion-input>
+            </div>
+            <div class="bg-orange-50 p-3 rounded-2xl border border-orange-100">
+              <label class="text-[9px] font-bold text-orange-600 uppercase">Alerta Stock</label>
+              <ion-input type="number" formControlName="stock_alert" class="font-bold text-orange-700"></ion-input>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-8 space-y-6">
+
+        <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-5">
+          <div class="form-group">
+            <label class="text-[10px] font-black uppercase text-slate-500 ml-1">Título Completo</label>
+            <ion-input formControlName="title" class="mt-1 bg-slate-50 rounded-xl px-4 py-1 font-bold text-slate-800"></ion-input>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-[10px] font-black uppercase text-slate-500 ml-1">Autor</label>
+              <ion-input formControlName="autor" class="bg-slate-50 rounded-xl px-4 py-1 font-medium"></ion-input>
+            </div>
+            <div>
+              <label class="text-[10px] font-black uppercase text-slate-500 ml-1">ISBN (13 dígitos)</label>
+              <ion-input formControlName="isbn" class="bg-slate-50 rounded-xl px-4 py-1 font-mono"></ion-input>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-[10px] font-black uppercase text-slate-500 ml-1">Editorial</label>
+              <ion-input formControlName="supplier" class="bg-slate-50 rounded-xl px-4 py-1"></ion-input>
+            </div>
+            <div>
+              <label class="text-[10px] font-black uppercase text-slate-500 ml-1">Categoría</label>
+              <ion-select formControlName="category" interface="popover" class="bg-slate-50 rounded-xl px-4">
+                <ion-select-option value="General English">General English</ion-select-option>
+                <ion-select-option value="Grammar & Vocabulary">Grammar & Vocabulary</ion-select-option>
+                <ion-select-option value="Exam Preparation">Exam Preparation</ion-select-option>
+                <ion-select-option value="Business English">Business English</ion-select-option>
+                <ion-select-option value="Readers">Readers</ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-6">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-slate-50 p-3 rounded-2xl">
+              <label class="text-[9px] font-black uppercase text-slate-400">Nivel</label>
+              <ion-select formControlName="level" interface="popover" class="font-bold">
+                <ion-select-option *ngFor="let l of ['A1','A2','B1','B2','C1','C2']" [value]="l">{{l}}</ion-select-option>
+              </ion-select>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-2xl">
+              <label class="text-[9px] font-black uppercase text-slate-400">Edición</label>
+              <ion-input type="number" formControlName="edition" class="font-bold"></ion-input>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-2xl">
+              <label class="text-[9px] font-black uppercase text-slate-400">Año</label>
+              <ion-input type="number" formControlName="year" class="font-bold"></ion-input>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-2xl">
+              <label class="text-[9px] font-black uppercase text-slate-400">Páginas</label>
+              <ion-input type="number" formControlName="pages" class="font-bold"></ion-input>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            <div>
+              <label class="text-[10px] font-black uppercase text-slate-500 ml-1">Formato de Tapa</label>
+              <ion-select formControlName="format" interface="popover" class="bg-slate-50 rounded-xl px-4 py-1">
+                <ion-select-option value="Bolsillo">Bolsillo</ion-select-option>
+                <ion-select-option value="Tapa Blanda">Tapa Blanda</ion-select-option>
+                <ion-select-option value="Tapa Dura">Tapa Dura</ion-select-option>
+              </ion-select>
+            </div>
+            <div>
+              <label class="text-[10px] font-black uppercase text-slate-500 ml-1">Dimensiones (Size)</label>
+              <ion-input formControlName="size" placeholder="Ej: 15x23 cm" class="bg-slate-50 rounded-xl px-4 py-1"></ion-input>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
+          <label class="text-[10px] font-black uppercase text-slate-500 ml-1">Sinopsis del Libro</label>
+          <ion-textarea formControlName="description" rows="4" class="mt-2 bg-slate-50 rounded-2xl px-4 py-2" placeholder="Resumen del contenido para el cliente..."></ion-textarea>
+        </div>
+
+        <div class="flex items-center gap-4 pt-4">
+          <button type="button" (click)="close()" class="flex-1 py-4 font-bold text-slate-400">Cancelar</button>
+          <button (click)="submit()" [disabled]="form.invalid || isSubmitting" class="flex-[2] submit-modal-btn group text-white py-4 rounded-2xl font-black shadow-xl shadow-slate-200 active:scale-95 transition-all disabled:opacity-50">
+            <span *ngIf="!isSubmitting">{{ isEdit ? 'Actualizar Libro' : 'Registrar Libro' }}</span>
+            <ion-spinner *ngIf="isSubmitting" name="crescent" color="light"></ion-spinner>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ion-content>

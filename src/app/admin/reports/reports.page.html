@@ -1,0 +1,212 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="admin-toolbar">
+    <div class="page-header-container">
+      <div class="header-info">
+        <h1><span>Reportes</span></h1>
+        <p class="text-slate-500 text-sm mt-1">Gestión administrativa y comercial</p>
+      </div>
+
+      <div class="flex gap-2 bg-white p-2 rounded-2xl border border-slate-100 shadow-sm mt-4 md:mt-0">
+        <ion-select [(ngModel)]="selectedMonth" (ionChange)="onFilterChange()" interface="popover" class="custom-mini-select text-[10px] font-black uppercase">
+          <ion-select-option [value]="1">Enero</ion-select-option>
+          <ion-select-option [value]="2">Febrero</ion-select-option>
+          <ion-select-option [value]="3">Marzo</ion-select-option>
+          <ion-select-option [value]="4">Abril</ion-select-option>
+          <ion-select-option [value]="5">Mayo</ion-select-option>
+          <ion-select-option [value]="6">Junio</ion-select-option>
+          <ion-select-option [value]="7">Julio</ion-select-option>
+          <ion-select-option [value]="8">Agosto</ion-select-option>
+          <ion-select-option [value]="9">Septiembre</ion-select-option>
+          <ion-select-option [value]="10">Octubre</ion-select-option>
+          <ion-select-option [value]="11">Noviembre</ion-select-option>
+          <ion-select-option [value]="12">Diciembre</ion-select-option>
+        </ion-select>
+        <ion-select [(ngModel)]="selectedYear" (ionChange)="onFilterChange()" interface="popover" class="custom-mini-select text-[10px] font-black uppercase">
+          <ion-select-option [value]="2025">2025</ion-select-option>
+          <ion-select-option [value]="2026">2026</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+  </ion-toolbar>
+
+  <ion-toolbar class="bg-white border-b border-slate-100 px-4">
+    <ion-segment [value]="activeTab" (ionChange)="segmentChanged($event)" mode="md" class="custom-segment">
+      <ion-segment-button value="inventory">
+        <ion-label class="text-[10px] font-black uppercase">Inventario</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="financial">
+        <ion-label class="text-[10px] font-black uppercase">Finanzas</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="bg-slate-50">
+  <div class="p-6 max-w-7xl mx-auto">
+
+    <div *ngIf="loading" class="flex flex-col items-center justify-center p-12">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p class="text-[10px] font-black uppercase text-slate-400 mt-4 tracking-widest">Generando reporte...</p>
+    </div>
+
+    <div *ngIf="!loading && activeTab === 'inventory'" class="space-y-4 animate__animated animate__fadeIn">
+
+      <div class="flex justify-end">
+        <button (click)="exportToPDF()"
+                class="flex items-center add-book-btn !px-3 !py-1.5 !text-[10px] !h-auto">
+        <ion-icon name="download-outline" class="text-base text-amber-500"></ion-icon>
+        Exportar a PDF
+      </button>
+      </div>
+
+      <div class="bg-white border border-slate-200 shadow-sm rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead class="sticky top-0 bg-slate-50 z-10">
+            <tr class="border-b border-slate-100">
+              <th class="pl-table-header text-left text-[9px] font-black text-slate-400 uppercase tracking-widest">Producto</th>
+              <th class="pl-table-header text-center text-[9px] font-black text-slate-400 uppercase tracking-widest">Stock Inicial</th>
+              <th class="pl-table-header text-center text-[9px] font-black text-emerald-600 uppercase tracking-widest">Entradas</th>
+              <th class="pl-table-header text-center text-[9px] font-black text-orange-600 uppercase tracking-widest">Salidas</th>
+              <th class="pl-table-header text-center text-[9px] font-black text-navy uppercase tracking-widest">Final</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+            <tr *ngFor="let item of reportData" class="hover:bg-slate-50/50 transition-colors">
+              <td class="pl-table-header py-5">
+                <div class="text-[11px] font-black text-navy uppercase leading-tight">{{ item.titulo }}</div>
+              </td>
+              <td class="pl-table-header text-center text-xs font-bold text-slate-400">{{ item.stock_inicial }}</td>
+              <td class="pl-table-header text-center text-emerald-600 font-black text-xs">+{{ item.entradas }}</td>
+              <td class="pl-table-header text-center text-orange-600 font-black text-xs">-{{ item.salidas }}</td>
+              <td class="pl-table-header text-center">
+                  <span [class]="item.alerta ? 'text-red-600 bg-red-50' : 'text-navy bg-slate-100'"
+                        class="inline-block px-3 py-1 font-black text-xs rounded-lg border border-transparent">
+                    {{ item.stock_final }}
+                  </span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!loading && activeTab === 'financial'" class="space-y-6 animate__animated animate__fadeIn">
+
+      <div class="bg-slate-800 p-4 rounded-2xl shadow-md mb-6 flex justify-between items-center" *ngIf="totalesFinancieros && totalesFinancieros.saldo_pendiente_global > 0">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center">
+            <ion-icon name="wallet" class="text-amber-500 text-lg"></ion-icon>
+          </div>
+          <div>
+            <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Saldo Histórico por Recuperar</p>
+            <p class="text-[10px] text-slate-400 font-bold mt-0.5">Inversión total acumulada menos ventas totales</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <h3 class="text-lg font-black text-white">${{ totalesFinancieros.saldo_pendiente_global | number:'1.2-2' }}</h3>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" *ngIf="totalesFinancieros">
+
+        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm relative">
+          <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Ingresos Netos</p>
+          <h2 class="text-xl font-black text-navy mt-1">${{ totalesFinancieros.ingresos_totales | number:'1.2-2' }}</h2>
+          <p class="text-[7px] text-red-400 font-bold uppercase mt-1">
+            Descuentos: -${{ totalesFinancieros.descuentos_totales | number:'1.2-2' }}
+          </p>
+        </div>
+
+        <div class="bg-white p-5 rounded-3xl border border-red-50 shadow-sm">
+          <p class="text-[8px] font-black text-red-500 uppercase tracking-widest">Inversión (Compras)</p>
+          <h2 class="text-xl font-black text-red-600 mt-1">-${{ totalesFinancieros.inversion_compras | number:'1.2-2' }}</h2>
+          <p class="text-[7px] text-emerald-500 font-bold uppercase mt-1">
+            Recuperado: {{ totalesFinancieros.porcentaje_recuperacion | number:'1.1-1' }}%
+          </p>
+        </div>
+
+        <div class="bg-white p-5 rounded-3xl border border-amber-50 shadow-sm">
+          <p class="text-[8px] font-black text-amber-600 uppercase tracking-widest">Ingreso Ebooks</p>
+          <h2 class="text-xl font-black text-amber-600 mt-1">${{ totalesFinancieros.ganancia_ebooks | number:'1.2-2' }}</h2>
+        </div>
+
+        <div [ngClass]="{
+         'bg-emerald-600 shadow-emerald-100': totalesFinancieros.utilidad_neta >= 0,
+         'bg-red-600 shadow-red-100': totalesFinancieros.utilidad_neta < 0
+       }"
+             class="p-5 rounded-3xl shadow-lg transition-all duration-500 relative overflow-hidden">
+          <p class="text-[8px] font-black uppercase text-white/80">
+            {{ totalesFinancieros.utilidad_neta < 0 ? 'Pérdida' : 'Ganancias Estimadas' }}
+          </p>
+          <div class="flex items-center gap-2">
+            <h2 class="text-xl font-black text-white mt-1">
+              ${{ totalesFinancieros.utilidad_neta | number:'1.2-2' }}
+            </h2>
+            <ion-icon *ngIf="totalesFinancieros.utilidad_neta < 0" name="alert-circle" class="text-white text-lg mt-1"></ion-icon>
+          </div>
+          <p class="text-[7px] text-white/70 font-bold uppercase mt-1">
+            Rentabilidad: {{ totalesFinancieros.porcentaje_rentabilidad | number:'1.1-1' }}%
+          </p>
+        </div>
+      </div>
+
+      <div class="flex justify-end">
+        <button (click)="exportToPDF()"
+                class="flex items-center add-book-btn !px-3 !py-1.5 !text-[10px] !h-auto">
+          <ion-icon name="download-outline" class="text-base text-amber-500"></ion-icon>
+          Exportar a PDF
+        </button>
+      </div>
+
+      <div class="bg-white border border-slate-200 shadow-sm rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead class="sticky top-0 bg-slate-50 z-10">
+            <tr class="border-b border-slate-100">
+              <th class="pl-table-header text-left text-[9px] font-black text-slate-400 uppercase tracking-widest">Producto</th>
+              <th class="pl-table-header text-center text-[9px] font-black text-slate-400 uppercase tracking-widest">Volumen de Venta</th>
+              <th class="pl-table-header text-center text-[9px] font-black text-slate-400 uppercase tracking-widest">Recaudación Neta</th>
+              <th class="pl-table-header text-center text-[9px] font-black text-slate-400 uppercase tracking-widest">Estatus</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+            <tr *ngFor="let item of financialData" class="hover:bg-slate-50 transition-colors">
+              <td class="pl-table-header">
+                <div class="text-[11px] font-black text-navy uppercase leading-tight">{{ item.titulo }}</div>
+                <div class="text-[9px] text-slate-400 font-bold tracking-tighter italic">ISBN: {{ item.isbn }}</div>
+              </td>
+              <td class="pl-table-header text-center">
+                <div class="flex items-center justify-center gap-3">
+                  <div class="flex flex-col items-center" *ngIf="item.unidades_fisicas > 0">
+                    <span class="text-[10px] font-black text-blue-600">{{ item.unidades_fisicas }}</span>
+                    <span class="text-[7px] text-slate-400 font-bold uppercase tracking-tighter">Físico</span>
+                  </div>
+                  <div class="w-[1px] h-4 bg-slate-100" *ngIf="item.unidades_fisicas > 0 && item.unidades_digitales > 0"></div>
+                  <div class="flex flex-col items-center" *ngIf="item.unidades_digitales > 0">
+                    <span class="text-[10px] font-black text-amber-500">{{ item.unidades_digitales }}</span>
+                    <span class="text-[7px] text-slate-400 font-bold uppercase">Ebook</span>
+                  </div>
+                  <span class="text-[9px] text-slate-300 italic" *ngIf="item.unidades_fisicas === 0 && item.unidades_digitales === 0">Sin ventas</span>
+                </div>
+              </td>
+              <td class="pl-table-header text-center font-black text-navy text-xs">${{ item.total_neto | number:'1.2-2' }}</td>
+              <td class="pl-table-header text-center">
+                <div class="flex flex-col items-center gap-1">
+                  <div [class]="item.ganancia_bruta_item > 0 ? 'bg-emerald-500 shadow-emerald-100' : 'bg-red-500 shadow-red-100'"
+                       class="w-2 h-2 rounded-full shadow-lg"></div>
+                  <span class="text-[7px] font-black uppercase"
+                        [class.text-emerald-600]="item.ganancia_bruta_item > 0"
+                        [class.text-red-600]="item.ganancia_bruta_item <= 0">
+                        {{ item.ganancia_bruta_item > 0 ? 'Rentable' : 'Inactivo' }}
+                      </span>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

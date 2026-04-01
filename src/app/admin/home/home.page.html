@@ -1,0 +1,156 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="admin-toolbar">
+    <div class="page-header-container px-6 py-2">
+      <div class="header-info">
+        <h1 class="text-xl font-black text-navy uppercase tracking-tighter">EDUMEX <span class="text-amber-500">Dashboard</span></h1>
+        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Control de Inventario y Ventas</p>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-slate-50">
+  <div class="p-6 max-w-7xl mx-auto">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div (click)="openCreateOrderModal()"
+           class="bg-emerald-500 p-6 rounded-[2rem] shadow-lg shadow-emerald-100 hover:scale-[1.02] transition-all cursor-pointer group flex items-center gap-5">
+        <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl group-hover:rotate-12 transition-transform">
+          <ion-icon name="add-circle-outline"></ion-icon>
+        </div>
+        <div>
+          <h3 class="text-white font-black text-sm uppercase tracking-widest">Entrada</h3>
+          <p class="text-white/70 text-[10px] font-bold uppercase">Ingreso de mercancía al stock</p>
+        </div>
+      </div>
+
+      <div (click)="openCreateOutputModal()"
+           class="bg-orange-500 p-6 rounded-[2rem] shadow-lg shadow-orange-100 hover:scale-[1.02] transition-all cursor-pointer group flex items-center gap-5">
+        <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl group-hover:-rotate-12 transition-transform">
+          <ion-icon name="exit-outline"></ion-icon>
+        </div>
+        <div>
+          <h3 class="text-white font-black text-sm uppercase tracking-widest">Salida</h3>
+          <p class="text-white/70 text-[10px] font-bold uppercase">Orden de egreso administrativo</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8" *ngIf="data">
+      <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Ventas Hoy</p>
+        <h2 class="text-xl font-black text-navy mt-1">${{ data.stats.today_sales | number:'1.2-2' }}</h2>
+        <p class="text-[7px] text-emerald-500 font-bold mt-1 uppercase">Ganancias estimadas</p>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+
+        <div class="flex items-center justify-between mt-1">
+          <div class="flex-1">
+            <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Libros Vendidos</p>
+            <h2 class="text-xl font-black text-navy">{{ data.stats.individual_books_today }}</h2>
+            <p class="text-[7px] text-blue-500 font-bold uppercase">Libros</p>
+          </div>
+
+          <div class="h-8 w-[1px] bg-slate-100 mx-2"></div>
+
+          <div class="flex-1 text-right">
+            <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Paquetes Vendidos</p>
+            <h2 class="text-xl font-black text-navy">{{ data.stats.packages_today }}</h2>
+            <p class="text-[7px] text-amber-500 font-bold uppercase">Paquetes</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Ebooks Vendidos</p>
+        <h2 class="text-xl font-black text-navy mt-1">{{ data.stats.ebooks_count_today }}</h2>
+        <p class="text-[7px] text-blue-500 font-bold mt-1 uppercase">Licencias digitales hoy</p>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm border-l-4 border-l-red-500">
+        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Stock Crítico</p>
+        <h2 class="text-xl font-black text-red-600 mt-1">{{ data.stats.critical_stock_count }}</h2>
+        <p class="text-[7px] text-red-400 font-bold mt-1 uppercase">Libros por reponer</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8" *ngIf="data">
+      <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-navy font-black text-[9px] uppercase tracking-[0.2em]">Ingreso semanal $</h3>
+          <ion-icon name="trending-up-outline" class="text-emerald-500 text-lg"></ion-icon>
+        </div>
+        <div class="h-[250px]">
+          <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="'line'"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-navy font-black text-[9px] uppercase tracking-[0.2em]">Productos más Vendidos</h3>
+          <ion-icon name="trophy-outline" class="text-amber-500 text-lg"></ion-icon>
+        </div>
+        <div class="h-[250px]">
+          <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" *ngIf="data">
+      <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col items-center">
+
+        <div class="w-full text-left self-start mb-4">
+          <h3 class="text-navy font-black text-[9px] uppercase tracking-[0.2em]">Distribución de Ingresos</h3>
+        </div>
+
+        <div class="chart-container relative w-full flex justify-center items-center" style="height: 200px; max-width: 250px;">
+          <canvas baseChart
+                  [data]="pieChartData"
+                  [type]="'doughnut'">
+          </canvas>
+        </div>
+
+        <div class="w-full mt-6 flex justify-around border-t border-slate-50 pt-4">
+          <div class="text-center">
+            <p class="text-[8px] font-bold text-slate-400 uppercase">Físico</p>
+            <p class="text-xs font-black text-navy">${{ data.charts.sources.physical | number:'1.0-0' }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-[8px] font-bold text-slate-400 uppercase">Digital</p>
+            <p class="text-xs font-black text-amber-500">${{ data.charts.sources.digital | number:'1.0-0' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-2 bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-navy font-black text-[9px] uppercase tracking-[0.2em]">Libros en Estado Crítico</h3>
+          <span class="bg-red-50 text-red-600 text-[8px] font-black px-3 py-1 rounded-full uppercase">Acción Requerida</span>
+        </div>
+
+        <div class="space-y-3">
+          <div *ngFor="let alert of data.alerts"
+               class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-red-50/30 transition-colors">
+            <div class="flex items-center gap-3">
+              <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+              <div>
+                <p class="text-[10px] font-black text-slate-800 uppercase leading-tight">{{ alert.title }}</p>
+                <p class="text-[8px] text-slate-400 font-bold uppercase mt-1">Límite de alerta: {{ alert.limit }} unidades</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-xs font-black text-red-600">{{ alert.current_stock }}</p>
+              <p class="text-[7px] font-bold text-slate-400 uppercase">En existencia</p>
+            </div>
+          </div>
+
+          <div *ngIf="data.alerts.length === 0" class="text-center py-8">
+            <ion-icon name="checkmark-done-circle" class="text-4xl text-emerald-400"></ion-icon>
+            <p class="text-[10px] font-bold text-slate-400 uppercase mt-2">Todo el stock está saludable</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,144 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="admin-toolbar">
+    <div class="page-header-container">
+      <div class="header-info">
+        <h1>Mi <span>Perfil</span></h1>
+        <p class="text-slate-500 text-sm mt-1">Información personal, seguridad y direcciones de envío</p>
+      </div>
+
+      <button (click)="openEdit()" class="add-book-btn">
+        <ion-icon name="create-outline"></ion-icon>
+        <span>Editar Perfil</span>
+      </button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-slate-50">
+  <div class="p-6 max-w-6xl mx-auto space-y-8">
+
+    <div *ngIf="!user" class="flex flex-col items-center justify-center py-20">
+      <ion-spinner name="lines-sharp"></ion-spinner>
+      <p class="text-gray text-[10px] font-black uppercase tracking-widest mt-4">Sincronizando Perfil...</p>
+    </div>
+
+    <ng-container *ngIf="user">
+
+      <section class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+        <div class="h-32 bg-edumex-navy relative overflow-hidden">
+          <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#F0A818 1px, transparent 1px); background-size: 20px 20px;"></div>
+        </div>
+
+        <div class="px-8 pb-8 relative">
+          <div class="relative -mt-12 mb-6 inline-block ">
+            <div class="w-24 h-24 bg-white rounded-3xl shadow-xl p-1.5 border border-slate-50">
+              <div class="w-full h-full bg-edumex-light rounded-2xl flex items-center justify-center">
+                <ion-icon name="person" class="text-5xl text-edumex-gray"></ion-icon>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-3">
+            <div>
+              <h2 class="text-3xl font-black text-slate-800 uppercase tracking-tighter">
+                {{ user.name }} {{ user.last_name }}
+              </h2>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <div class="lg:col-span-2 space-y-6">
+              <div>
+                <span class="inline-block bg-edumex-light text-edumex-blue px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest mt-1">
+                  Cuenta {{ user.customer_type }}
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="data-field bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
+                  <p class="label">Correo Electrónico</p>
+                  <div class="flex items-center gap-2 mt-1">
+                    <ion-icon name="mail-outline" class="text-edumex-blue text-lg"></ion-icon>
+                    <p class="text-sm font-bold text-edumex-navy">{{ user.email }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-edumex-navy rounded-[2rem] p-6 text-white flex flex-col justify-between shadow-lg shadow-navy/20">
+              <div>
+                <div class="flex items-center gap-2 mb-2 opacity-60">
+                  <ion-icon name="lock-closed-outline"></ion-icon>
+                  <span class="text-[9px] font-black uppercase tracking-widest">Seguridad</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mb-6 leading-relaxed">
+                  Mantén tu cuenta protegida actualizando tu contraseña regularmente.
+                </p>
+              </div>
+              <button (click)="openChangePassword()" class="w-full py-3 bg-white/10 hover:bg-edumex-gold hover:text-navy rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+                Cambiar Contraseña
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="flex items-center justify-between px-2">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-edumex-blue/10 flex items-center justify-center text-edumex-blue">
+              <ion-icon name="location-outline" class="text-xl"></ion-icon>
+            </div>
+            <div>
+              <h3 class="text-xs font-black text-edumex-navy uppercase tracking-widest">Mis Direcciones</h3>
+              <p class="text-[10px] text-gray font-bold uppercase">{{ addresses.length }} Registradas</p>
+            </div>
+          </div>
+          <button (click)="openAddressModal()" class="bg-edumex-navy text-white px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-navy/10 active:scale-95 transition-all">
+            + Añadir Nueva
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <div *ngIf="addresses.length === 0" class="col-span-full bg-white border-2 border-dashed border-slate-200 p-12 rounded-[2.5rem] text-center">
+            <ion-icon name="map-outline" class="text-4xl text-slate-200 mb-2"></ion-icon>
+            <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest">No hay direcciones de entrega</p>
+          </div>
+
+          <div *ngFor="let addr of addresses"
+               class="group bg-white border border-slate-100 p-6 rounded-[2rem] relative hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
+
+            <div class="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button (click)="openAddressModal(addr)" class="p-2 text-edumex-gray hover:text-edumex-blue"><ion-icon name="create-outline"></ion-icon></button>
+              <button (click)="deleteAddress(addr.id)" class="p-2 text-edumex-gray hover:text-red-500"><ion-icon name="trash-outline"></ion-icon></button>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-edumex-light flex items-center justify-center text-edumex-blue group-hover:bg-edumex-gold group-hover:text-edumex-navy transition-colors">
+                <ion-icon name="home-outline" class="text-xl"></ion-icon>
+              </div>
+              <div class="flex-1">
+                <div class="flex flex-wrap items-center gap-2 mb-2">
+                  <p class="text-[11px] font-black text-edumex-navy uppercase">{{ addr.recipient_name }}</p>
+                  <span *ngIf="addr.is_default" class="bg-emerald-100 text-emerald-700 text-[8px] px-2 py-0.5 rounded-lg font-black uppercase tracking-tighter">Predeterminada</span>
+                </div>
+
+                <p class="text-[10px] text-edumex-gray font-bold leading-relaxed uppercase">
+                  {{ addr.street }} #{{ addr.external_number }} {{ addr.internal_number ? 'Int. '+addr.internal_number : '' }}<br>
+                  {{ addr.neighborhood }}, CP {{ addr.postal_code }}<br>
+                  <span class="text-edumex-navy">{{ addr.locality }}, {{ addr.state }}</span>
+                </p>
+
+                <div *ngIf="addr.references" class="mt-4 pt-3 border-t border-slate-50">
+                  <p class="text-[8px] font-black text-edumex-blue uppercase tracking-widest mb-1">Referencias</p>
+                  <p class="text-[9px] text-edumex-gray italic line-clamp-2">"{{ addr.references }}"</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </ng-container>
+  </div>
+</ion-content>

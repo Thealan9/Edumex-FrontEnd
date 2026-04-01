@@ -1,0 +1,129 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="px-4 py-2">
+    <ion-title class="font-black text-xl text-slate-800">
+      {{ isEdit ? 'Editar' : 'Nuevo' }} <span class="text-blue-600">Usuario</span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()" class="bg-slate-100 rounded-full text-slate-600">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-slate-50">
+  <div class="p-4 md:p-8 max-w-5xl mx-auto">
+    <form [formGroup]="form" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+      <div class="lg:col-span-4 space-y-6">
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
+          <label class="text-[10px] font-black uppercase text-slate-400 mb-4 block ml-1">Nivel de Acceso</label>
+
+          <div class="space-y-4">
+            <div class="p-4 rounded-2xl border-2 transition-all"
+                 [ngClass]="isEdit ? 'bg-slate-50 border-slate-100 opacity-80' : 'bg-blue-50 border-blue-200'">
+              <label class="text-[9px] font-black uppercase text-blue-600 block mb-1">Rol en el Sistema</label>
+              <ion-select formControlName="role" interface="popover" class="font-bold text-slate-800">
+                <ion-select-option value="admin">Administrador</ion-select-option>
+                <ion-select-option value="warehouseman">Bodeguero</ion-select-option>
+                <ion-select-option value="user">Cliente</ion-select-option>
+              </ion-select>
+            </div>
+
+            <div *ngIf="form.get('role')?.value === 'user'"
+                 class="p-4 rounded-2xl bg-slate-50 border-2 border-slate-200 animate__animated animate__fadeIn">
+              <label class="text-[9px] font-black uppercase text-slate-500 block mb-1">Clasificación de Cliente</label>
+              <ion-select formControlName="customer_type" interface="popover" class="font-bold text-slate-800">
+                <ion-select-option value="individual">Persona Física</ion-select-option>
+                <ion-select-option value="institutional">Institución / Colegio</ion-select-option>
+              </ion-select>
+            </div>
+
+            <p *ngIf="isEdit" class="text-[9px] text-slate-400 text-center italic mt-2">
+              * El rol no es editable por seguridad.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-8 space-y-6">
+
+        <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-6">
+          <h3 class="text-slate-800 font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
+            <ion-icon name="person-outline" class="text-blue-500 text-lg"></ion-icon>
+            Datos Personales
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="field">
+              <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Nombre(s)</label>
+              <ion-input formControlName="name" class="bg-slate-50 rounded-xl px-4 py-1 mt-1 font-bold"></ion-input>
+            </div>
+            <div class="field">
+              <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Apellido(s)</label>
+              <ion-input formControlName="last_name" class="bg-slate-50 rounded-xl px-4 py-1 mt-1 font-bold"></ion-input>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="field">
+              <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Correo Electrónico</label>
+              <ion-input type="email" formControlName="email" placeholder="ejemplo@correo.com" class="bg-slate-50 rounded-xl px-4 py-1 mt-1 font-medium"></ion-input>
+            </div>
+            <div class="field animate__animated animate__fadeIn" *ngIf="form.get('role')?.value === 'user'">
+              <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Teléfono</label>
+              <ion-input type="tel" formControlName="phone" placeholder="10 dígitos" maxlength="10" class="bg-slate-50 rounded-xl px-4 py-1 mt-1 font-medium"></ion-input>
+            </div>
+          </div>
+
+          <div class="field" *ngIf="!isEdit || (isEdit && form.get('password')?.value)">
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Contraseña {{ isEdit ? '(Para cambiar)' : '' }}</label>
+            <ion-input type="password" formControlName="password" placeholder="••••••••" class="bg-slate-50 rounded-xl px-4 py-1 mt-1"></ion-input>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 p-6 md:p-8 rounded-[2.5rem] shadow-xl space-y-6 animate__animated animate__fadeInUp"
+             *ngIf="form.get('role')?.value === 'user' && form.get('customer_type')?.value === 'institutional'">
+
+          <h3 class="text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
+            <ion-icon name="business-outline" class="text-blue-400 text-lg"></ion-icon>
+            Información de la Institución
+          </h3>
+
+          <div class="field">
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Nombre de la Institución / Razón Social</label>
+            <ion-input formControlName="institution_name" class="bg-white px-4 py-1 mt-1 text-white font-mono"></ion-input>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-[10px] font-black uppercase text-slate-400 ml-1">ID Fiscal (RFC)</label>
+              <ion-input formControlName="tax_id" class="bg-white px-4 py-1 mt-1 text-white font-mono uppercase"></ion-input>
+            </div>
+            <div>
+              <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Código Postal</label>
+              <ion-input formControlName="postal_code" class="bg-white px-4 py-1 mt-1 text-white font-mono"></ion-input>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1">Dirección Fiscal Completa</label>
+            <ion-textarea formControlName="address" rows="2" class="bg-white px-4 py-2 mt-1 text-white"></ion-textarea>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4 pt-4 pb-8">
+          <button type="button" (click)="close()" class="flex-1 py-4 font-bold text-slate-400 hover:text-slate-600 transition-colors">
+            Cancelar
+          </button>
+          <button (click)="submit()" [disabled]="form.invalid || isSubmitting"
+                  class="flex-[2] submit-modal-btn text-white py-4 rounded-2xl font-black shadow-xl shadow-slate-200 active:scale-95 transition-all disabled:opacity-50">
+            <span *ngIf="!isSubmitting">{{ isEdit ? 'Actualizar Usuario' : 'Crear Usuario' }}</span>
+            <ion-spinner *ngIf="isSubmitting" name="crescent" color="light"></ion-spinner>
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</ion-content>

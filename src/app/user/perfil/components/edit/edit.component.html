@@ -1,0 +1,71 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="modal-toolbar">
+    <ion-title class="modal-title">
+      Edición <span>Mi Perfil</span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()" class="close-btn">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="form-content">
+  <div *ngIf="loading" class="flex flex-col items-center justify-center h-full w-full p-8">
+    <ion-spinner name="lines-sharp" color="primary"></ion-spinner>
+    <p class="text-slate-400 text-xs mt-4 uppercase tracking-widest font-bold animate-pulse">Cargando perfil...</p>
+  </div>
+
+  <div class="p-6 md:p-8" *ngIf="!loading && !error">
+    <form [formGroup]="form" class="space-y-6">
+
+      <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-5">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="form-group">
+            <label class="form-label">Nombre(s)</label>
+            <div class="input-wrapper">
+              <ion-icon name="person-outline" class="input-icon"></ion-icon>
+              <ion-input formControlName="name" placeholder="Ej: Juan" class="custom-input"></ion-input>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Apellidos</label>
+            <div class="input-wrapper">
+              <ion-icon name="person-outline" class="input-icon"></ion-icon> <ion-input formControlName="last_name" placeholder="Ej: Pérez" class="custom-input"></ion-input>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Correo Electrónico</label>
+          <div class="input-wrapper">
+            <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+            <ion-input type="email" formControlName="email" placeholder="correo@edumex.com" class="custom-input"></ion-input>
+          </div>
+        </div>
+
+      </div>
+
+      <button
+        class="submit-modal-btn group"
+        [disabled]="form.invalid"
+        (click)="save()">
+        <span>Guardar Cambios</span>
+        <ion-icon name="save-outline" class="group-hover:scale-110 transition-transform"></ion-icon>
+      </button>
+
+    </form>
+  </div>
+
+  <div *ngIf="!loading && error" class="flex flex-col items-center justify-center h-full w-full p-12 text-center">
+    <div class="p-4 bg-red-50 rounded-full mb-4">
+      <ion-icon name="alert-circle-outline" class="text-4xl text-red-500"></ion-icon>
+    </div>
+    <h3 class="text-slate-800 font-bold">Error de carga</h3>
+    <p class="text-slate-500 text-sm mt-1">No pudimos obtener la información del usuario a editar.</p>
+    <button (click)="close()" class="mt-6 text-blue-600 font-bold text-sm uppercase tracking-widest">Regresar</button>
+  </div>
+</ion-content>

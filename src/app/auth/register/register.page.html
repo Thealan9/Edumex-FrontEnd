@@ -1,0 +1,140 @@
+<ion-content class="login-page">
+  <div class="login-split">
+
+    <div class="brand-panel">
+      <div class="brand-overlay"></div>
+      <div class="brand-content">
+        <img src="assets/logo-educamex.png" alt="EDUCAMEX" class="brand-logo">
+        <h2 class="brand-tagline">Tu puerta al conocimiento</h2>
+        <p class="brand-desc">Únete a nuestra comunidad educativa</p>
+        <div class="brand-features">
+          <div class="feature-item">
+            <a routerLink="/home">
+              <ion-icon name="home-outline"></ion-icon>
+              <span> Regresar al Inicio</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-panel overflow-y-auto">
+      <div class="form-wrapper py-12">
+
+        <div class="mobile-logo">
+          <img src="assets/logo-educamex.png" alt="EDUCAMEX">
+        </div>
+
+        <div class="text-intro">
+          <h1>Crea tu cuenta</h1>
+          <p>Completa tus datos para empezar a comprar</p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="register()" class="space-y-6">
+
+          <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label text-xs font-bold text-slate-600">Nombre(s)</label>
+                <div class="input-wrapper border rounded-xl p-2 bg-slate-50">
+                  <ion-input type="text" formControlName="name" placeholder="Samuel" class="text-sm"></ion-input>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label text-xs font-bold text-slate-600">Apellido(s)</label>
+                <div class="input-wrapper border rounded-xl p-2 bg-slate-50">
+                  <ion-input type="text" formControlName="last_name" placeholder="Ramos" class="text-sm"></ion-input>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label text-xs font-bold text-slate-600">Correo Electrónico</label>
+              <div class="input-wrapper border rounded-xl p-2 bg-slate-50 flex items-center">
+                <ion-icon name="mail-outline" class="mr-2 text-slate-400"></ion-icon>
+                <ion-input type="email" formControlName="email" placeholder="ejemplo@edumex.com" class="text-sm"></ion-input>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label text-xs font-bold text-slate-600">Teléfono</label>
+                <div class="input-wrapper border rounded-xl p-2 bg-slate-50 flex items-center">
+                  <ion-icon name="call-outline" class="mr-2 text-slate-400"></ion-icon>
+                  <ion-input type="tel" formControlName="phone" placeholder="10 dígitos" maxlength="10" class="text-sm"></ion-input>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label text-xs font-bold text-slate-600">Tipo de Cliente</label>
+                <div class="input-wrapper border rounded-xl p-2 bg-slate-50">
+                  <ion-select formControlName="customer_type" interface="popover" class="text-sm">
+                    <ion-select-option value="individual">Persona Física</ion-select-option>
+                    <ion-select-option value="institutional">Institución / Colegio</ion-select-option>
+                  </ion-select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label text-xs font-bold text-slate-600">Contraseña</label>
+              <div class="input-wrapper border rounded-xl p-2 bg-slate-50 flex items-center">
+                <ion-icon name="lock-closed-outline" class="mr-2 text-slate-400"></ion-icon>
+                <ion-input [type]="passwordType" formControlName="password" placeholder="Mín. 8 caracteres" class="text-sm"></ion-input>
+                <button type="button" (click)="togglePassword()" class="text-slate-400 px-2">
+                  <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-blue-50/50 rounded-2xl p-6 border border-blue-100 space-y-4 animate__animated animate__fadeIn"
+               *ngIf="form.get('customer_type')?.value === 'institutional'">
+
+            <h3 class="text-blue-800 font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
+              <ion-icon name="business-outline"></ion-icon> Información de la Institución
+            </h3>
+
+            <div class="form-group">
+              <label class="form-label text-xs font-bold text-blue-900">Razón Social</label>
+              <div class="input-wrapper border border-blue-200 rounded-xl p-2 bg-white">
+                <ion-input type="text" formControlName="institution_name" placeholder="Nombre legal del colegio" class="text-sm"></ion-input>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label text-xs font-bold text-blue-900">RFC</label>
+                <div class="input-wrapper border border-blue-200 rounded-xl p-2 bg-white">
+                  <ion-input type="text" formControlName="tax_id" placeholder="12 caracteres" class="text-sm" (ionInput)="onRfcInput($event)"></ion-input>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label text-xs font-bold text-blue-900">C.P.</label>
+                <div class="input-wrapper border border-blue-200 rounded-xl p-2 bg-white">
+                  <ion-input type="text" formControlName="postal_code" placeholder="93400" class="text-sm"></ion-input>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label text-xs font-bold text-blue-900">Dirección Completa</label>
+              <div class="input-wrapper border border-blue-200 rounded-xl p-2 bg-white">
+                <ion-textarea formControlName="address" placeholder="Calle, número y colonia..." rows="2" class="text-sm"></ion-textarea>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="hero-button" [disabled]="isSubmitting || form.invalid">
+            <span *ngIf="!isSubmitting">REGISTRARME AHORA</span>
+            <div class="loader" *ngIf="isSubmitting"></div>
+          </button>
+
+          <p class="text-center text-sm text-slate-500 pt-4">
+            ¿Ya tienes cuenta? <a routerLink="/login" class="text-blue-600 font-bold">Inicia sesión aquí</a>
+          </p>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</ion-content>

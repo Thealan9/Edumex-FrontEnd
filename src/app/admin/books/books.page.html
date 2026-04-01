@@ -1,0 +1,101 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="admin-toolbar">
+    <div class="page-header-container">
+      <div class="header-info">
+        <h1>Catálogo <span>Digital & Físico</span></h1>
+        <ion-segment [(ngModel)]="viewMode" (ionChange)="loadBooks()" mode="ios" class="mt-2 bg-slate-100 rounded-xl p-1">
+          <ion-segment-button value="physical">
+            <ion-label class="text-[10px] font-black uppercase">Físicos</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="ebook">
+            <ion-label class="text-[10px] font-black uppercase">Ebooks</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+
+      <button (click)="viewMode === 'physical' ? openCreateEdit() : openEbookModal()" class="add-book-btn">
+        <ion-icon name="book-outline"></ion-icon>
+        <span>Nuevo {{ viewMode === 'physical' ? 'Libro' : 'Ebook' }}</span>
+      </button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-slate-50">
+  <div class="p-6">
+
+    <div class="max-w-2xl mx-auto mb-10">
+      <div class="input-wrapper shadow-sm border-slate-200">
+        <ion-icon name="search-outline" class="input-icon"></ion-icon>
+        <ion-input
+          placeholder="Buscar por título o autor..."
+          (ionInput)="onSearch($event)"
+          [debounce]="500"
+          class="custom-input">
+        </ion-input>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+      <div *ngFor="let item of books"
+           (click)="viewMode === 'physical' ? openCreateEdit(item) : openEbookModal(item)"
+           class="group bg-white rounded-[2.5rem] p-4 border border-slate-100 shadow-sm flex flex-col transition-all duration-500">
+
+        <div class="relative aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-100 shadow-inner">
+          <img [src]="item.image_url || 'assets/no-book.png'" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700">
+
+          <div *ngIf="viewMode === 'ebook'" class="absolute top-4 right-4 bg-blue-600 text-white px-2 py-0.5 rounded-lg text-[8px] font-black uppercase shadow-lg">
+            Digital
+          </div>
+
+          <div class="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3 py-1 rounded-xl text-[10px] font-black border border-slate-100 shadow-sm">
+            {{ item.level }}
+          </div>
+        </div>
+
+        <div class="mt-5 px-1 flex-1 flex flex-col">
+          <h3 class="text-[13px] font-black text-navy uppercase line-clamp-2 min-h-[32px]">{{ item.title }}</h3>
+
+          <div class="flex justify-between items-center mt-auto pt-4 border-t border-slate-50">
+            <div *ngIf="viewMode === 'ebook'">
+              <p class="text-[8px] text-gray uppercase font-black tracking-widest">Precio Digital</p>
+              <p class="text-[12px] font-black text-emerald-600">${{ item.price }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 flex gap-2 items-center pt-2">
+
+            <ion-icon name="settings-outline" class="text-lg"></ion-icon>
+
+
+          <div class="bg-light px-3 py-1.5 rounded-2xl flex items-center gap-2" (click)="$event.stopPropagation()">
+            <span class="text-[8px] font-black text-navy uppercase tracking-tighter">{{ item.active ? 'Activo' : 'Off' }}</span>
+            <ion-toggle [checked]="item.active" (ionChange)="toggleStatus(item)" color="success" class="scale-75"></ion-toggle>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!loading" class="mt-12 p-4 bg-white rounded-[2rem] border border-slate-100 shadow-sm flex justify-between items-center max-w-xl mx-auto mb-10">
+      <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
+        Página {{ currentPage }} de {{ lastPage }}
+      </div>
+
+      <div class="flex gap-3">
+        <button (click)="changePage(false)" [disabled]="currentPage === 1"
+                class="p-3 border border-slate-100 rounded-2xl bg-slate-50 text-navy disabled:opacity-30 transition-all hover:bg-navy hover:text-white">
+          <ion-icon name="chevron-back-outline" class="text-lg"></ion-icon>
+        </button>
+        <button (click)="changePage(true)" [disabled]="currentPage === lastPage"
+                class="p-3 border border-slate-100 rounded-2xl bg-slate-50 text-navy disabled:opacity-30 transition-all hover:bg-navy hover:text-white">
+          <ion-icon name="chevron-forward-outline" class="text-lg"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ion-refresher slot="fixed" (ionRefresh)="loadBooks($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+</ion-content>

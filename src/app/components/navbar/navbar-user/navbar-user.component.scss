@@ -1,0 +1,292 @@
+$navy: #181848;
+$blue: #304878;
+$gold: #F0A818;
+$gray: #7890A8;
+$light: #F0F4F8;
+$white: #ffffff;
+
+// 1. Estructura Base
+.navbar-superior {
+  --background: #{$white};
+  height: 70px;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid rgba($navy, 0.05);
+  box-shadow: 0 4px 12px rgba($navy, 0.03);
+  z-index: 1000;
+
+  ion-toolbar {
+    --background: #{$white};
+    --border-style: none;
+    --padding-top: 0;
+    --padding-bottom: 0;
+  }
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 16px;
+
+  @media (min-width: 1024px) {
+    padding: 0 24px;
+  }
+}
+
+// 2. Branding
+.brand-box-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+
+  .sidebar-logo-wrap {
+    width: 38px;
+    height: 38px;
+    background: $light;
+    border-radius: 10px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba($navy, 0.05);
+  }
+
+  .brand-name {
+    display: none;
+    color: $navy;
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+
+    @media (min-width: 640px) {
+      display: inline-block;
+    }
+  }
+}
+
+// 3. Navegación Desktop
+.nav-links-horizontal {
+  display: none;
+  align-items: center;
+  gap: 4px;
+
+  @media (min-width: 1024px) {
+    display: flex;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    color: $gray;
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+
+    &.active-nav {
+      color: $navy;
+      background: rgba($gold, 0.15);
+    }
+  }
+}
+
+// 4. Acciones y Perfil (Corregido Centrado Móvil)
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  @media (min-width: 1024px) {
+    gap: 16px;
+  }
+}
+
+.profile-trigger-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: center; // Centra el contenido en móvil
+  width: 40px; // Ancho fijo en móvil para que sea un círculo
+  height: 40px;
+  background: $light;
+  border-radius: 50%;
+  border: 1px solid rgba($navy, 0.08);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  @media (min-width: 768px) {
+    width: auto;
+    height: auto;
+    border-radius: 30px;
+    padding: 4px 12px 4px 4px;
+  }
+
+  &:hover {
+    border-color: $gold;
+    background: $white;
+    box-shadow: 0 4px 8px rgba($navy, 0.05);
+  }
+
+  .profile-avatar-small {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: $navy;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    ion-icon {
+      color: $gold;
+      font-size: 1rem;
+    }
+  }
+
+  .profile-text {
+    display: none; // Oculto en móvil
+    color: $navy;
+    font-weight: 800;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-left: 8px;
+
+    @media (min-width: 768px) {
+      display: inline-block;
+    }
+  }
+}
+
+// 5. Popover Perfil (Más llamativo)
+.profile-popover {
+  --width: 220px;
+  --border-radius: 20px;
+  --box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+
+  &::part(content) {
+    border: 1px solid rgba($gold, 0.2);
+  }
+
+  ion-content {
+    --background: #{$white};
+  }
+
+  .popover-list {
+    padding: 10px;
+  }
+
+  ion-item {
+    --background: transparent;
+    --color: #{$navy};
+    --border-radius: 12px;
+    --padding-start: 12px;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+
+    &::part(native) {
+      &:hover {
+        background: rgba($gold, 0.08);
+        color: $blue;
+      }
+    }
+
+    ion-icon {
+      color: $gold;
+      font-size: 1.2rem;
+      margin-right: 12px;
+    }
+
+    &.logout {
+      margin-top: 8px;
+      --color: #ff4d4d;
+      ion-icon { color: #ff4d4d; }
+      &::part(native):hover {
+        background: #fff5f5;
+      }
+    }
+  }
+
+  .popover-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba($navy, 0.1), transparent);
+    margin: 8px 12px;
+  }
+}
+
+// 6. Carrito
+.cart-link {
+  position: relative;
+  cursor: pointer;
+
+  .cart-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ff4d4d;
+    color: white;
+    font-size: 8px;
+    font-weight: 900;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid $white;
+  }
+}
+
+// 7. Menú Lateral (Corregida Iluminación Home)
+ion-menu {
+  ion-header ion-toolbar {
+    --background: #{$navy};
+    --color: #{$white};
+  }
+
+  .sidebar-item {
+    --padding-start: 16px;
+    --border-radius: 12px;
+    --color: #{$gray};
+    font-weight: 700;
+    margin: 4px 8px;
+
+    // Clase que Ionic aplica automáticamente al router activo
+    &.active-nav {
+      --background: rgba($gold, 0.15);
+      --color: #{$navy};
+      ion-icon {
+        color: #{$gold};
+        opacity: 1;
+      }
+    }
+
+    ion-icon {
+      font-size: 1.4rem;
+      opacity: 0.7;
+    }
+  }
+}
+
+.mobile-menu-btn {
+  color: $navy;
+  font-size: 1.8rem;
+
+  @media (min-width: 1024px) {
+    display: none !important;
+  }
+}
+
+// Ajuste Responsive
+@media (max-width: 1024px) {
+  .navbar-superior { height: 60px; }
+}
+

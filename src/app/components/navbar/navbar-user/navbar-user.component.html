@@ -1,0 +1,336 @@
+<ion-app>
+  <ion-menu side="start" menuId="user-mobile-menu" contentId="main-content">
+    <ion-header class="ion-no-border">
+      <ion-toolbar class="--background: #181848; color: white;">
+        <ion-title class="text-sm font-black uppercase italic">Menú</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="--background: #0f172a;">
+      <ion-list lines="none" class="bg-slate-900 p-4">
+        <ion-item routerLink="/home"
+                  routerLinkActive="active-nav"
+                  [routerLinkActiveOptions]="{exact: true}"
+                  (click)="closeCart()"
+                  class="sidebar-item mb-2">
+          <ion-icon slot="start" name="home-outline"></ion-icon>
+          <ion-label>Inicio</ion-label>
+        </ion-item>
+        <ion-item routerLink="/home/libros" routerLinkActive="active-nav" (click)="closeCart()" class="sidebar-item mb-2">
+          <ion-icon slot="start" name="book-outline"></ion-icon>
+          <ion-label>Libros</ion-label>
+        </ion-item>
+        <ion-item routerLink="/home/pedidos" routerLinkActive="active-nav"  (click)="closeCart()" class="sidebar-item mb-2">
+          <ion-icon slot="start" name="receipt-outline"></ion-icon>
+          <ion-label>Mis pedidos</ion-label>
+        </ion-item>
+        <ion-item (click)="openCart()" class="cart-link" style="cursor:pointer" class="sidebar-item mb-2">
+          <ion-icon name="bag-handle-outline"></ion-icon>
+         Mi bolsa
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <ion-header class="ion-no-border navbar-superior">
+    <ion-toolbar>
+      <div class="navbar-container">
+
+        <div class="flex items-center gap-2">
+          <ion-menu-button menu="user-mobile-menu" class="mobile-menu-btn lg:hidden"></ion-menu-button>
+
+          <div class="brand-box-horizontal" routerLink="/home">
+            <div class="sidebar-logo-wrap">
+              <img src="assets/logo-educamex.png" alt="EDUCAMEX" class="sidebar-logo">
+            </div>
+            <span class="brand-name hidden sm:inline">EDUMEX</span>
+          </div>
+        </div>
+
+        <nav class="nav-links-horizontal hidden lg:flex">
+          <a routerLink="/home" routerLinkActive="active-nav" [routerLinkActiveOptions]="{exact: true}">
+            <ion-icon name="home-outline"></ion-icon> Inicio
+          </a>
+          <a routerLink="/home/libros" routerLinkActive="active-nav">
+            <ion-icon name="book-outline"></ion-icon> Libros
+          </a>
+          <a routerLink="/home/pedidos" routerLinkActive="active-nav">
+            <ion-icon name="receipt-outline"></ion-icon> Mis pedidos
+          </a>
+          <a (click)="openCart()" class="cart-link" style="cursor:pointer">
+            <div class="cart-icon-wrapper">
+              <ion-icon name="bag-handle-outline"></ion-icon>
+              <span class="cart-badge" *ngIf="((cartItemsCount$ | async) ?? 0) > 0">
+                {{ cartItemsCount$ | async }}
+              </span>
+            </div>
+            Mi Bolsa
+          </a>
+        </nav>
+
+        <div class="navbar-actions">
+
+          <div *ngIf="user" id="profile-trigger-nav" class="profile-trigger-horizontal">
+            <div class="profile-avatar-small"><ion-icon name="person"></ion-icon></div>
+            <span class="profile-text hidden md:inline">Mi Cuenta</span>
+          </div>
+
+          <!-- CASO: INVITADO -->
+          <button *ngIf="!user" routerLink="/login" class="login-btn-navbar">
+            <span>Iniciar sesión</span>
+          </button>
+        </div>
+      </div>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content id="main-content" [fullscreen]="true">
+    <router-outlet></router-outlet>
+  </ion-content>
+
+  <ion-popover *ngIf="user" trigger="profile-trigger-nav" triggerAction="click" [dismissOnSelect]="true" class="profile-popover">
+    <ng-template>
+      <ion-content>
+        <ion-list lines="none" class="popover-list">
+          <ion-item button routerLink="/home/perfil">
+            <ion-icon slot="start" name="person-outline"></ion-icon>
+            <ion-label >Mi Perfil</ion-label>
+          </ion-item>
+          <div class="popover-divider"></div>
+          <ion-item button (click)="logout()" class="logout">
+            <ion-icon slot="start" name="log-out-outline"></ion-icon>
+            <ion-label>Cerrar Sesión</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
+</ion-app>
+
+<ion-menu side="end" menuId="cart-menu" contentId="main-content" type="overlay">
+  <ion-header class="ion-no-border">
+    <ion-toolbar class="--background: #181848; color: white;">
+      <ion-title class="text-xs font-black uppercase tracking-widest">
+        <ion-icon name="bag-handle-outline" class="text-2xl pl-3"></ion-icon>
+      </ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="closeCart()"><ion-icon name="close-outline"></ion-icon></ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content class="bg-slate-50">
+    <!-- ESTADO VACÍO -->
+    <div *ngIf="((cartItemsCount$ | async) ?? 0) === 0" class="flex flex-col items-center justify-center h-full p-8 text-center">
+      <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+        <ion-icon name="bag-handle-outline" class="text-4xl text-slate-300"></ion-icon>
+      </div>
+      <h3 class="text-slate-800 font-bold">Tu bolsa está Vacío</h3>
+      <p class="text-slate-400 text-xs mt-2">Parece que aún no has agregado tesoros a tu colección.</p>
+    </div>
+
+    <div *ngIf="((cartItemsCount$ | async) ?? 0) > 0">
+      <div class="p-4">
+
+        <div *ngFor="let item of (cartItems$ | async)" class="bg-white rounded-2xl p-3 mb-2 shadow-sm border border-slate-100 flex gap-3 items-center">
+          <div class="flex-1 min-w-0">
+            <p class="text-[11px] font-bold text-slate-800 truncate mb-1">{{ item.book.title }}</p>
+            <div class="flex items-center gap-2">
+              <div class="flex items-center bg-slate-100 rounded-lg p-1">
+                <button (click)="updateQuantity(item, -1)" class="w-5 h-5 flex items-center justify-center text-slate-600"><ion-icon name="remove"></ion-icon></button>
+                <span class="px-2 text-[10px] font-black">{{ item.quantity }}</span>
+                <button (click)="updateQuantity(item, 1)" class="w-5 h-5 flex items-center justify-center text-slate-600"><ion-icon name="add"></ion-icon></button>
+              </div>
+              <span class="text-[9px] text-slate-400 font-bold uppercase">
+                {{ item.book.type === 'ebook' ? 'Ebook Digital' : (item.buy_type === 'package' ? 'Paquete' : 'Unidad') }}
+              </span>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-xs font-black text-slate-900">${{ (item.buy_type === 'package' ? item.book.price_package : item.book.price_unit) * item.quantity }}</p>
+            <button (click)="removeItem(item)" class="text-red-400 mt-1"><ion-icon name="trash-outline"></ion-icon></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-4 mb-4" *ngIf="cartService.shippingCost > 0">
+        <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+          <div class="flex justify-between items-center mb-1">
+            <p class="text-[9px] font-black text-blue-800 uppercase tracking-tighter">
+              Te faltan ${{ (299 - cartService.amountAfterDiscount) | number:'1.2-2' }} para envío GRATIS
+            </p>
+            <ion-icon name="gift-outline" class="text-blue-600 text-xs animate-bounce"></ion-icon>
+          </div>
+
+          <div class="w-full bg-blue-200 h-1.5 rounded-full overflow-hidden shadow-inner">
+            <div class="bg-blue-600 h-full transition-all duration-700 ease-out"
+                 [style.width.%]="(cartService.amountAfterDiscount / 299) * 100">
+            </div>
+          </div>
+
+          <p class="text-[7px] text-blue-400 font-bold uppercase mt-1 text-right italic">
+            Válido en compras mayores a $299.00
+          </p>
+        </div>
+      </div>
+
+      <div class="p-4 pt-0" *ngIf="user && cartService.hasPhysicalItems()">
+        <div class="flex items-center justify-between mb-2 bg-slate-100 p-2 rounded-xl cursor-pointer" (click)="isAddressCollapsed = !isAddressCollapsed">
+          <div class="flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-slate-800 text-white flex items-center justify-center text-[9px] font-bold">2</span>
+            <h3 class="text-slate-800 font-bold text-sm">Entrega</h3>
+          </div>
+          <ion-icon [name]="isAddressCollapsed ? 'chevron-down-outline' : 'chevron-up-outline'"></ion-icon>
+        </div>
+
+        <div [hidden]="isAddressCollapsed">
+          <div class="flex justify-end mb-2">
+            <button (click)="showNewAddressForm = !showNewAddressForm" class="text-blue-600 text-[9px] font-black uppercase">
+              {{ showNewAddressForm ? 'Usar Guardada' : '+ Nueva Dirección' }}
+            </button>
+          </div>
+
+      <div *ngIf="!showNewAddressForm" class="space-y-3">
+        <div *ngIf="savedAddresses.length === 0" class="bg-blue-50 border border-blue-100 p-6 rounded-3xl text-center">
+          <ion-icon name="location-outline" class="text-3xl text-blue-400 mb-2"></ion-icon>
+          <p class="text-blue-800 text-[10px] font-medium">No tienes direcciones guardadas.</p>
+        </div>
+
+        <div *ngFor="let addr of savedAddresses"
+             (click)="selectedAddressId = addr.id"
+             [class.border-blue-600]="selectedAddressId === addr.id"
+             class="bg-white p-4 rounded-3xl border-2 border-transparent shadow-sm transition-all cursor-pointer relative group">
+          <div class="flex items-start gap-3">
+            <ion-icon [name]="selectedAddressId === addr.id ? 'checkmark-circle' : 'ellipse-outline'"
+                      [class.text-blue-600]="selectedAddressId === addr.id" class="text-xl text-slate-300"></ion-icon>
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <p class="text-[11px] font-black text-slate-900 uppercase">{{ addr.recipient_name }}</p>
+                <span *ngIf="addr.is_default" class="bg-blue-100 text-blue-600 text-[8px] px-2 py-0.5 rounded-full font-bold">PREDETERMINADA</span>
+              </div>
+              <p class="text-[10px] text-slate-500 mt-1">
+                {{ addr.street }} #{{ addr.external_number }}<br>
+                Col. {{ addr.neighborhood }}, {{ addr.locality }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="showNewAddressForm" class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
+        <div class="space-y-3">
+          <div class="input-wrapper">
+            <ion-input [(ngModel)]="addressForm.recipient_name" placeholder="¿Quién recibe?" class="custom-input"></ion-input>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.recipient_phone" placeholder="Teléfono" class="custom-input"></ion-input></div>
+            <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.postal_code" placeholder="CP" class="custom-input"></ion-input></div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.state" placeholder="Estado" class="custom-input"></ion-input></div>
+            <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.municipality" placeholder="Municipio" class="custom-input"></ion-input></div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.locality" placeholder="Ciudad" class="custom-input"></ion-input></div>
+            <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.neighborhood" placeholder="Colonia" class="custom-input"></ion-input></div>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="col-span-2 input-wrapper"><ion-input [(ngModel)]="addressForm.street" placeholder="Calle" class="custom-input"></ion-input></div>
+            <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.external_number" placeholder="# Ext" class="custom-input"></ion-input></div>
+          </div>
+          <div class="mt-2">
+            <label class="form-label text-[10px] font-bold text-slate-400 uppercase tracking-widest">Referencias / Indicaciones</label>
+            <div class="input-wrapper !items-start p-2">
+              <ion-icon name="map-outline" class="input-icon mt-1"></ion-icon>
+              <ion-textarea [(ngModel)]="addressForm.references"
+                            placeholder="Ej. Portón azul, frente al parque, entre calle X y Y..."
+                            rows="2"
+                            class="custom-input !min-h-[60px] text-xs">
+              </ion-textarea>
+            </div>
+          </div>
+          <ion-item lines="none" class="--background: transparent; font-size: 11px;">
+            <ion-checkbox [(ngModel)]="addressForm.is_default" labelPlacement="end">S/N</ion-checkbox>
+          </ion-item>
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+
+  <ion-footer class="ion-no-border p-4 bg-white border-t border-slate-100" *ngIf="((cartItemsCount$ | async) ?? 0) > 0">
+
+    <div class="space-y-1 mb-4 p-3 bg-slate-50 rounded-2xl shadow-inner">
+      <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase">
+        <span>Productos</span>
+        <span>${{ cartService.subtotal | number:'1.2-2' }}</span>
+      </div>
+      <div *ngIf="cartService.totalSavings > 0 && user" class="flex justify-between text-[10px] font-bold text-emerald-600 uppercase">
+        <span>Tu Ahorro</span>
+        <span>- ${{ cartService.totalSavings | number:'1.2-2' }}</span>
+      </div>
+      <div class="flex justify-between text-[10px] font-bold uppercase"
+           [class.text-emerald-600]="cartService.shippingCost === 0"
+           [class.text-slate-400]="cartService.shippingCost > 0">
+        <span>Envío</span>
+        <span>{{ cartService.shippingCost === 0 ? '¡GRATIS!' : ('$' + cartService.shippingCost) }}</span>
+      </div>
+      <div class="flex justify-between items-center pt-2 border-t border-slate-200 mt-2">
+        <span class="text-slate-900 font-black text-xs uppercase">Total a pagar</span>
+        <span class="text-xl font-black text-blue-600">${{ cartService.finalTotal | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <div *ngIf="isOrderReady() && user" class="animate__animated animate__fadeIn">
+      <p class="text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest text-center">Selecciona tu método de pago</p>
+
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <button (click)="paymentMethod = 'stripe'; initStripe()"
+                [class.border-blue-600]="paymentMethod === 'stripe'"
+                [class.bg-blue-50]="paymentMethod === 'stripe'"
+                class="border-2 p-3 rounded-2xl flex flex-col items-center gap-2 transition-all hover:bg-slate-50">
+          <ion-icon name="card-outline" class="text-2xl text-slate-700"></ion-icon>
+          <span class="text-[10px] font-black uppercase">Tarjeta</span>
+        </button>
+
+        <button (click)="paymentMethod = 'paypal'; initPayPal()"
+                [class.border-blue-600]="paymentMethod === 'paypal'"
+                [class.bg-blue-50]="paymentMethod === 'paypal'"
+                class="border-2 p-3 rounded-2xl flex flex-col items-center gap-2 transition-all hover:bg-slate-50">
+          <ion-icon name="logo-paypal" class="text-2xl text-blue-700"></ion-icon>
+          <span class="text-[10px] font-black uppercase">PayPal</span>
+        </button>
+      </div>
+
+      <div [hidden]="paymentMethod !== 'stripe'" class="space-y-3 p-3 bg-slate-50 rounded-2xl border border-slate-200">
+        <div id="card-element" class="p-2 bg-white rounded-lg border border-slate-300">
+        </div>
+        <button (click)="processStripePayment()"
+                [disabled]="isProcessing"
+                class="submit-modal-btn w-full !bg-slate-900 shadow-lg">
+          <ion-spinner name="crescent" *ngIf="isProcessing"></ion-spinner>
+          <span *ngIf="!isProcessing">PAGAR CON TARJETA</span>
+        </button>
+      </div>
+
+      <div [hidden]="paymentMethod !== 'paypal'" class="mt-2">
+        <div id="paypal-button-container"></div>
+      </div>
+    </div>
+
+    <button *ngIf="!isOrderReady()"
+            class="submit-modal-btn w-full opacity-50 grayscale cursor-not-allowed">
+      {{ cartService.hasPhysicalItems() ? 'Completa la dirección para pagar' : 'Cargando...' }}
+    </button>
+
+    <div *ngIf="cartService.hasPhysicalItems()" class="flex justify-between text-[10px] font-bold uppercase"
+         [class.text-emerald-600]="cartService.shippingCost === 0"
+         [class.text-slate-400]="cartService.shippingCost > 0">
+    </div>
+
+    <p *ngIf="!user" (click)="closeCart()" routerLink="/login" class="text-center text-[10px] font-bold text-blue-600 uppercase mt-4 cursor-pointer">
+      Inicia sesión para finalizar tu compra
+    </p>
+
+  </ion-footer>
+</ion-menu>

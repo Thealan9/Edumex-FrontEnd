@@ -1,0 +1,186 @@
+<ion-content class="bg-[#fcfaf7]">
+  <div class="p-4 md:p-8 max-w-7xl mx-auto">
+
+    <header class="mb-8 border-b-2 border-[#e2ddd2] pb-4 flex flex-col md:flex-row justify-between items-baseline">
+      <div>
+        <h1 class="text-3xl font-serif text-[#4a3f35] uppercase tracking-tight">Catalogo Edumex</h1>
+        <p class="text-[#8b7e74] font-bold text-xs mt-1 uppercase tracking-widest">{{ books.length }} resultados encontrados</p>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+      <aside class="lg:col-span-3">
+        <div class="sticky top-6 space-y-6">
+          <div class="bg-[#f4f1ea] border border-[#e2ddd2] shadow-sm overflow-hidden rounded-sm">
+            <div class="bg-[#716a62] text-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] flex justify-between items-center">
+              <span>Filtros Activos</span>
+              <ion-icon name="funnel-outline"></ion-icon>
+            </div>
+
+            <div class="p-4 border-b border-[#e2ddd2] bg-white/50"
+                 *ngIf="filters.category !== 'Todos' || filters.searchText !== '' || filters.level !== 'Todos' || filters.type !== 'Todos'">
+              <div class="flex flex-wrap gap-2 mb-2">
+                <div *ngIf="filters.type !== 'Todos'" class="flex items-center gap-1 bg-white border border-[#e2ddd2] px-2 py-1 text-[9px] font-bold text-[#4a3f35]">
+                  {{filters.type === 'physical' ? 'Físico' : 'Digital'}}
+                  <ion-icon name="close-circle" class="cursor-pointer text-blue-600" (click)="filters.type = 'Todos'; applyFilters()"></ion-icon>
+                </div>
+                <div *ngIf="filters.category !== 'Todos'" class="flex items-center gap-1 bg-white border border-[#e2ddd2] px-2 py-1 text-[9px] font-bold text-[#4a3f35]">
+                  {{filters.category}}
+                  <ion-icon name="close-circle" class="cursor-pointer text-blue-600" (click)="filters.category = 'Todos'; applyFilters()"></ion-icon>
+                </div>
+                <div *ngIf="filters.searchText" class="flex items-center gap-1 bg-white border border-[#e2ddd2] px-2 py-1 text-[9px] font-bold text-[#4a3f35]">
+                  "{{filters.searchText}}"
+                  <ion-icon name="close-circle" class="cursor-pointer text-blue-600" (click)="filters.searchText = ''; applyFilters()"></ion-icon>
+                </div>
+              </div>
+              <button (click)="resetFilters()" class="text-[9px] font-black text-blue-600 uppercase hover:underline">Limpiar todo</button>
+            </div>
+
+            <div class="p-4 space-y-8">
+              <section>
+                <label class="block text-[9px] font-black text-[#8b7e74] uppercase mb-3 tracking-widest border-b border-[#e2ddd2] pb-1">Formato</label>
+                <div class="grid grid-cols-1 gap-2">
+                  <ion-segment [(ngModel)]="filters.type" (ionChange)="applyFilters()" mode="ios" class="bg-white">
+                    <ion-segment-button value="Todos">
+                      <ion-label class="text-[9px] font-bold">TODOS</ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="physical">
+                      <ion-label class="text-[9px] font-bold">FÍSICO</ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="ebook">
+                      <ion-label class="text-[9px] font-bold">EBOOK</ion-label>
+                    </ion-segment-button>
+                  </ion-segment>
+                </div>
+              </section>
+
+              <section>
+                <label class="block text-[9px] font-black text-[#8b7e74] uppercase mb-3 tracking-widest">Buscador</label>
+                <ion-searchbar
+                  placeholder="Título o autor..."
+                  [(ngModel)]="filters.searchText"
+                  (ionInput)="onSearch($event)"
+                  class="custom-search-aside"
+                  mode="md">
+                </ion-searchbar>
+              </section>
+
+              <section>
+                <label class="block text-[9px] font-black text-[#8b7e74] uppercase mb-3 tracking-widest border-b border-[#e2ddd2] pb-1">Nivel (CEFR)</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <button *ngFor="let lvl of ['Todos', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']"
+                          (click)="filters.level = lvl; applyFilters()"
+                          [ngClass]="filters.level === lvl ? 'border-blue-700 bg-blue-50 text-blue-700 font-black' : 'border-[#e2ddd2] text-[#5d544d] font-bold'"
+                          class="border px-1 py-2 text-[10px] rounded-md transition-all uppercase">
+                    {{ lvl }}
+                  </button>
+                </div>
+              </section>
+
+              <section>
+                <label class="block text-[9px] font-black text-[#8b7e74] uppercase mb-3 tracking-widest border-b border-[#e2ddd2] pb-1">Materias</label>
+                <div class="flex flex-col gap-1">
+                  <button *ngFor="let cat of ['Todos'].concat(categories)"
+                          (click)="filters.category = cat; applyFilters()"
+                          class="w-full text-left px-2 py-1.5 text-[11px] font-medium transition-all"
+                          [ngClass]="filters.category === cat ? 'text-blue-700 font-bold underline underline-offset-4' : 'text-[#5d544d] hover:text-black'">
+                    {{ cat === 'Todos' ? 'Todas las materias' : cat }}
+                  </button>
+                </div>
+              </section>
+
+              <section class="flex items-center justify-between bg-white/50 p-3 border border-[#e2ddd2]">
+                <div class="flex flex-col">
+                  <label class="text-[9px] font-black text-[#4a3f35] uppercase tracking-tighter">Stock</label>
+                  <span class="text-[8px] text-[#8b7e74] font-bold uppercase">Disponibles</span>
+                </div>
+                <ion-toggle color="success" mode="ios" [(ngModel)]="filters.onlyStock" (ionChange)="applyFilters()"></ion-toggle>
+              </section>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="lg:col-span-9">
+        <div *ngIf="books.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-12">
+          <div *ngFor="let book of books"
+               (click)="goToBook(book)"
+               class="flex gap-5 group cursor-pointer animate__animated animate__fadeIn">
+
+            <div class="w-32 h-44 flex-shrink-0 shadow-[5px_5px_15px_rgba(0,0,0,0.08)] border border-[#e2ddd2] overflow-hidden relative bg-white">
+              <img [src]="book.image_url"
+                   [class.grayscale]="book.type === 'physical' && book.total_stock === 0"
+                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+
+              <div *ngIf="book.type === 'ebook'" class="absolute top-0 right-0 bg-blue-600 text-white text-[7px] font-black px-2 py-1 uppercase shadow-md">
+                Ebook
+              </div>
+
+              <div *ngIf="book.type === 'physical' && book.total_stock === 0" class="absolute inset-0 bg-white/60 flex items-center justify-center">
+                <span class="text-[9px] font-black text-red-600 border-2 border-red-600 px-2 py-1 uppercase rotate-12 bg-white/90">Sin Stock</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col py-1 flex-1">
+              <div>
+                <h3 class="text-sm font-serif font-bold text-[#3a332d] group-hover:text-blue-800 transition-colors leading-snug mb-1">
+                  {{ book.title }}
+                </h3>
+                <p class="text-[10px] text-[#8b7e74] font-bold uppercase tracking-wider mb-2">
+                  {{ book.autor || 'Autor Desconocido' }}
+                </p>
+              </div>
+
+              <div class="flex items-baseline gap-1 mt-auto">
+                <span class="text-lg font-black text-[#006466]">${{ book.price_unit | number:'1.2-2' }}</span>
+                <span class="text-[8px] text-[#8b7e74] font-black uppercase tracking-tighter">MXN</span>
+              </div>
+
+              <div class="mt-3 flex flex-wrap items-center gap-1.5">
+                <span class="text-[7px] font-black bg-[#4a3f35] text-white px-1.5 py-0.5 rounded-sm uppercase tracking-tighter">
+                  Nivel {{ book.level }}
+                </span>
+
+                <span *ngIf="book.type === 'ebook'" class="text-[7px] font-black bg-blue-50 text-blue-600 border border-blue-100 px-1.5 py-0.5 rounded-sm uppercase">
+                  Acceso Digital
+                </span>
+
+                <span *ngIf="book.type === 'physical' && book.total_stock > 0" class="text-[7px] font-black text-emerald-600 border border-emerald-200 px-1.5 py-0.5 rounded-sm uppercase bg-emerald-50">
+                  En Stock
+                </span>
+
+                <span class="text-[7px] font-bold text-slate-400 uppercase tracking-tighter">
+                  {{ book.category }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="books.length === 0 && !loading"
+             class="flex flex-col items-center justify-center py-24 bg-[#f4f1ea] border-2 border-dashed border-[#e2ddd2] px-6 text-center rounded-lg">
+          <ion-icon name="search-outline" class="text-6xl text-[#e2ddd2] mb-4"></ion-icon>
+          <h4 class="text-[#4a3f35] font-serif text-xl mb-2">Sin resultados</h4>
+          <p class="text-[#8b7e74] text-xs max-w-sm">Intenta ajustar los criterios de búsqueda o filtros.</p>
+          <button (click)="resetFilters()" class="mt-6 text-[10px] font-black text-blue-600 uppercase border-b-2 border-blue-600 pb-1">Ver catálogo completo</button>
+        </div>
+
+        <div *ngIf="loading" class="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div *ngFor="let i of [1,2,3,4]" class="flex gap-5 animate-pulse">
+            <div class="w-32 h-44 bg-[#e2ddd2]"></div>
+            <div class="flex-1 space-y-3 py-2">
+              <div class="h-4 bg-[#e2ddd2] w-3/4"></div>
+              <div class="h-3 bg-[#e2ddd2] w-1/2"></div>
+              <div class="h-6 bg-[#e2ddd2] w-1/3 mt-4"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <ion-refresher slot="fixed" (ionRefresh)="loadCatalog($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+</ion-content>

@@ -41,6 +41,7 @@ export interface Order {
 export class OrdersPage implements OnInit, OnDestroy {
   pendingOrders: Order[] = [];
   private pollingSub?: Subscription;
+  isLoading: boolean = true;
 
   constructor(private http: HttpClient,private modalCtrl: ModalController,private alertCtrl: AlertController,) {}
 
@@ -53,8 +54,9 @@ export class OrdersPage implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           this.pendingOrders = res;
+          this.isLoading = false;
         },
-        error: (err) => console.error('Error cargando despacho', err)
+        error: (err) => this.isLoading = false
       });
   }
 

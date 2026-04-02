@@ -27,48 +27,73 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
       <div *ngFor="let order of pendingOrders"
-           class="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col hover:shadow-xl transition-all duration-300">
+           class="bg-white rounded-[2rem] border border-slate-200 shadow-sm flex flex-col hover:shadow-xl transition-all duration-300 h-[500px]">
 
-<!--        <div class="bg-navy p-5 flex justify-between items-center text-white">-->
-<!--          <div>-->
-<!--            <p class="text-[9px] uppercase font-black text-blue-300 tracking-[0.2em]">Referencia</p>-->
-<!--            <h2 class="text-xl font-black italic">#{{ order.id }}</h2>-->
-<!--          </div>-->
-<!--          <div class="text-right">-->
-<!--            <p class="text-[10px] font-bold text-blue-300 uppercase">{{ order.created_at | date:'shortTime' }}</p>-->
-<!--          </div>-->
-<!--        </div>-->
+        <div class="p-5 pb-2 border-b border-slate-100 flex items-center justify-between">
+          <h3 class="text-[10px] font-black text-gray uppercase tracking-widest">Lista de Surtido</h3>
+          <span class="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">Orden #{{ order.id }}</span>
+        </div>
 
-        <div class="p-5 flex-1">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-[10px] font-black text-gray uppercase tracking-widest">Detalles</h3>
-           </div>
+        <div class="p-5 flex-1 overflow-y-auto custom-scrollbar">
+          <div class="space-y-4">
 
-          <div class="space-y-3">
             <div *ngFor="let item of order.items"
-                 class="flex items-center gap-4 p-3 bg-light rounded-2xl border border-slate-100 transition-colors hover:bg-white">
+                 class="bg-light rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
 
-              <div class="w-10 h-10 bg-navy text-black rounded-xl flex items-center justify-center font-black text-sm shadow-md">
-                {{ item.quantity }}
+              <div class="p-3 bg-white flex items-start gap-4 border-b border-slate-100 relative">
+
+
+                <div class="flex-1 overflow-hidden pt-1">
+                  <p class="text-xs font-black text-navy uppercase leading-tight">{{ item.book.title }}</p>
+
+                  <div class="flex items-center gap-2 mt-2">
+
+                    <span [class]="item.buy_type === 'package' ? 'bg-purple-100 text-purple-700 border-purple-200' : 'bg-orange-100 text-orange-700 border-orange-200'"
+                          class="text-[9px] font-black uppercase px-2 py-1 rounded-md tracking-widest border flex items-center gap-1">
+
+                      <ion-icon [name]="item.buy_type === 'package' ? 'layers-outline' : 'book-outline'"></ion-icon>
+
+                      <ng-container *ngIf="item.buy_type === 'package'; else unitLabel">
+                        Paquetes {{ item.quantity }} <span class="opacity-75 font-bold ml-1">({{ item.book.units_per_package }} uds)</span>
+                      </ng-container>
+                      <ng-template #unitLabel>
+                        Unidades {{ item.quantity }}
+                      </ng-template>
+                    </span>
+
+                  </div>
+                </div>
               </div>
 
-              <div class="flex-1 overflow-hidden">
-                <p class="text-[11px] font-black text-navy uppercase truncate leading-tight">{{ item.book.title }}</p>
+              <div class="p-3 bg-slate-50 space-y-2">
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-1">
+                  <ion-icon name="location-outline"></ion-icon> Ubicaciones de Extracción
+                </p>
 
-                <div class="flex items-center gap-2 mt-1">
-                  <span [class]="item.buy_type === 'package' ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'"
-                        class="text-[8px] font-black uppercase px-2 py-0.5 rounded-lg tracking-tighter">
-                    {{ item.buy_type === 'package' ? 'Paquete' : 'Unidad' }}
-                  </span>
+                <div *ngFor="let loc of item.picking_locations"
+                     class="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200">
+                  <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <span class="text-[10px] font-black text-slate-700 font-mono tracking-wider">{{ loc.location_code }}</span>
+                  </div>
+                  <div class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-[10px] font-black">
+                    Tomar: {{ loc.quantity_to_pick }}
+                  </div>
                 </div>
+
+                <div *ngIf="!item.picking_locations || item.picking_locations.length === 0"
+                     class="text-[10px] text-red-500 font-bold flex items-center gap-1 p-2">
+                  <ion-icon name="warning-outline"></ion-icon> Ubicación no registrada
+                </div>
+
               </div>
             </div>
           </div>
         </div>
 
-        <div class="p-5 bg-slate-50 border-t border-slate-100">
+        <div class="p-5 bg-slate-50 border-t border-slate-100 mt-auto">
           <button (click)="dispatchOrder(order.id)"
-                  class="w-full bg-emerald-500 hover:bg-emerald-600 text-navy py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-lg shadow-emerald-200 active:scale-95 transition-all flex items-center justify-center gap-2">
+                  class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-2xl! font-black uppercase text-[10px] tracking-widest shadow-lg shadow-emerald-200 active:scale-95 transition-all flex items-center justify-center gap-2">
             <ion-icon name="cube-outline" class="text-lg"></ion-icon>
             Confirmar Despacho
           </button>
@@ -81,5 +106,4 @@
       <p class="font-bold mt-4 uppercase tracking-widest">No hay órdenes pendientes</p>
     </div>
   </div>
-
 </ion-content>

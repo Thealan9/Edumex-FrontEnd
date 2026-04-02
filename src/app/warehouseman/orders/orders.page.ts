@@ -5,6 +5,33 @@ import { interval, Subscription } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
 import {AlertComponent} from "../../components/alert/alert.component";
 import {AlertController, ModalController} from "@ionic/angular";
+export interface PickingLocation {
+  location_id: number;
+  location_code: string;
+  quantity_to_pick: number;
+}
+
+export interface Book {
+  id: number;
+  title: string;
+  units_per_package: number;
+}
+
+export interface OrderItem {
+  id: number;
+  book_id: number;
+  quantity: number;
+  buy_type: string;
+  book: Book;
+  picking_locations: PickingLocation[];
+}
+
+export interface Order {
+  id: number;
+  status: string;
+  created_at: string;
+  items: OrderItem[];
+}
 @Component({
   selector: 'app-orders',
   templateUrl: './orders.page.html',
@@ -12,7 +39,7 @@ import {AlertController, ModalController} from "@ionic/angular";
   standalone:false
 })
 export class OrdersPage implements OnInit, OnDestroy {
-  pendingOrders: any[] = [];
+  pendingOrders: Order[] = [];
   private pollingSub?: Subscription;
 
   constructor(private http: HttpClient,private modalCtrl: ModalController,private alertCtrl: AlertController,) {}

@@ -37,6 +37,19 @@ export class Cart {
       this._cart.next([...this.items]);
     }
   }
+
+  public sanitizeCartForUser(customerType: string | undefined | null) {
+    if (customerType === 'individual') {
+      const initialLength = this.items.length;
+
+      this.items = this.items.filter(item => item.buy_type !== 'package');
+
+      if (this.items.length !== initialLength) {
+        this.notify();
+      }
+    }
+  }
+
   public loadDiscountRules() {
 
     this.http.get<any>(`${environment.apiUrl}/user/discounts`).subscribe({

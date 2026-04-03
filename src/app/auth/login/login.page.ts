@@ -5,6 +5,7 @@ import { ModalController } from '@ionic/angular';
 import { finalize } from 'rxjs';
 import { AlertComponent } from 'src/app/components/alert/alert.component';
 import { Auth } from 'src/app/core/auth';
+import {Cart} from "../../user/services/cart";
 
 @Component({
   selector: 'app-login',
@@ -27,6 +28,7 @@ export class LoginPage implements OnInit {
     private auth: Auth,
     private router: Router,
     private modalCtrl: ModalController,
+    private cart: Cart
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -59,6 +61,7 @@ export class LoginPage implements OnInit {
       .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
         next: (res) => {
+          this.cart.sanitizeCartForUser(res.user.customer_type);
           const role = res.user.role;
           if (role === 'admin') this.router.navigateByUrl('/admin', { replaceUrl: true });
           else if (role === 'warehouseman') this.router.navigateByUrl('/warehouseman', { replaceUrl: true });

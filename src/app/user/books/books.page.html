@@ -30,8 +30,12 @@
                   <ion-icon name="close-circle" class="cursor-pointer text-blue-600" (click)="filters.category = 'Todos'; applyFilters()"></ion-icon>
                 </div>
                 <div *ngIf="filters.searchText" class="flex items-center gap-1 bg-white border border-[#e2ddd2] px-2 py-1 text-[9px] font-bold text-[#4a3f35]">
-                  "{{filters.searchText}}"
+                  {{filters.searchText}}
                   <ion-icon name="close-circle" class="cursor-pointer text-blue-600" (click)="filters.searchText = ''; applyFilters()"></ion-icon>
+                </div>
+                <div *ngIf="filters.level !== 'Todos'" class="flex items-center gap-1 bg-white border border-[#e2ddd2] px-2 py-1 text-[9px] font-bold text-[#4a3f35]">
+                  {{filters.level}}
+                  <ion-icon name="close-circle" class="cursor-pointer text-blue-600" (click)="filters.level = 'Todos'; applyFilters()"></ion-icon>
                 </div>
               </div>
               <button (click)="resetFilters()" class="text-[9px] font-black text-blue-600 uppercase hover:underline">Limpiar todo</button>

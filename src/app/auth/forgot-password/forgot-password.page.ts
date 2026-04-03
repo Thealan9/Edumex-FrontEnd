@@ -43,13 +43,14 @@ export class ForgotPasswordPage implements OnInit {
     this.http.post(`${environment.apiUrl}/forgot-password`, { email })
       .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe({
-        next: () => {
-          this.showAlert('Te hemos enviado un enlace al correo electrónico para restablecer tu contraseña.', 'success');
+        next: (response: any) => {
+          const successMessage = response?.message || 'Te hemos enviado un enlace al correo electrónico para restablecer tu contraseña.';
+          this.showAlert(successMessage, 'success');
           setTimeout(() => this.router.navigate(['/login']), 3000);
         },
         error: (err) => {
-          // Generalmente un 422 o 400 si el correo no existe
-          this.showAlert('No pudimos encontrar un usuario con ese correo electrónico.', 'error');
+          const errorMessage = err.error?.message || 'Ocurrió un error inesperado al intentar procesar tu solicitud.';
+          this.showAlert(errorMessage, 'error');
         }
       });
   }

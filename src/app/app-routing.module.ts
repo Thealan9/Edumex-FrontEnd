@@ -20,6 +20,10 @@ const routes: Routes = [
     path: 'register',
     loadChildren: () => import('./auth/register/register.module').then( m => m.RegisterPageModule)
   },
+  {
+    path: 'recuperar-contraseña',
+    loadChildren: () => import('./auth/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
+  },
 //----------------------------------User---------------------------------------
   {
   path: 'home',
@@ -120,7 +124,11 @@ const routes: Routes = [
     canMatch: [AuthGuard,RoleGuard],
     data: { roles: ['warehouseman'] },
     loadChildren: () => import('./warehouseman/orders/orders.module').then( m => m.OrdersPageModule)
+  },  {
+    path: 'reset-password',
+    loadChildren: () => import('./auth/reset-password/reset-password.module').then( m => m.ResetPasswordPageModule)
   },
+
 
 
 

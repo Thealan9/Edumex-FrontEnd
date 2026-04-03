@@ -49,6 +49,10 @@ export class RegisterPage implements OnInit {
     this.setupInstitutionalValidators();
   }
 
+  async ionViewWillEnter() {
+    const token = await this.auth.getToken();
+    if (token) this.router.navigateByUrl('/home/perfil', { replaceUrl: true });
+  }
   setupInstitutionalValidators() {
     this.form.get('customer_type')?.valueChanges.subscribe(type => {
       const fields = ['tax_id', 'institution_name', 'address', 'postal_code'];

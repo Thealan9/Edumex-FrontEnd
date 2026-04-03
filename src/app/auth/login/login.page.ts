@@ -40,7 +40,7 @@ export class LoginPage implements OnInit {
 
   async ionViewWillEnter() {
     const token = await this.auth.getToken();
-    if (token) this.router.navigateByUrl('/home', { replaceUrl: true });
+    if (token) this.router.navigateByUrl('/home/perfil', { replaceUrl: true });
   }
 
   togglePassword() {

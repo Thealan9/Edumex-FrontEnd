@@ -41,16 +41,6 @@ export class CreateEditComponent  implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.data) {
-      this.isEdit = true;
-      this.form.patchValue(this.data);
-      this.form.get('password')?.clearValidators();
-      this.form.get('password')?.updateValueAndValidity();
-
-      this.form.get('role')?.disable();
-      this.form.get('customer_type')?.disable();
-    }
-
     this.form.get('role')?.valueChanges.subscribe(role => {
       const phoneControl = this.form.get('phone');
       if (role !== 'user') {
@@ -88,6 +78,16 @@ export class CreateEditComponent  implements OnInit {
       addressControl?.updateValueAndValidity();
       pcControl?.updateValueAndValidity();
     });
+    if (this.data) {
+      this.isEdit = true;
+      this.form.patchValue(this.data);
+
+      this.form.get('password')?.clearValidators();
+      this.form.get('password')?.updateValueAndValidity();
+
+      this.form.get('role')?.disable();
+      this.form.get('customer_type')?.disable();
+    }
   }
 
   submit() {

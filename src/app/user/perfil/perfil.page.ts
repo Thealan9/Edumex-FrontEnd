@@ -34,6 +34,7 @@ export class PerfilPage implements OnInit {
   async openEdit() {
     const modal = await this.modalCtrl.create({
       component: EditComponent,
+      cssClass: 'book-modal',
       componentProps: {
         user: this.user,
       },

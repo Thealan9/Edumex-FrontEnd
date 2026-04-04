@@ -1,71 +1,110 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar class="modal-toolbar">
-    <ion-title class="modal-title">
-      Edición <span>Mi Perfil</span>
-    </ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="close()" class="close-btn">
-        <ion-icon name="close-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+  <ion-toolbar class="bg-white">
+    <div class="flex items-center justify-between px-6">
+      <div class="flex items-center gap-3">
+        <div>
+          <h1 class="text-md font-black text-slate-800 uppercase tracking-tighter">
+            Editar <span class="text-blue-600">Perfil</span>
+          </h1>
+        </div>
+      </div>
+      <button (click)="close()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all">
+        <ion-icon name="close-outline" class="text-xl"></ion-icon>
+      </button>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="form-content">
+<ion-content class="bg-slate-50">
   <div *ngIf="loading" class="flex flex-col items-center justify-center h-full w-full p-8">
     <ion-spinner name="lines-sharp" color="primary"></ion-spinner>
-    <p class="text-slate-400 text-xs mt-4 uppercase tracking-widest font-bold animate-pulse">Cargando perfil...</p>
+    <p class="text-slate-400 text-[10px] uppercase tracking-widest font-black mt-4 animate-pulse">Cargando perfil...</p>
   </div>
 
-  <div class="p-6 md:p-8" *ngIf="!loading && !error">
+  <div class="p-6 md:p-8 max-w-3xl mx-auto" *ngIf="!loading && !error">
     <form [formGroup]="form" class="space-y-6">
 
-      <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-5">
+      <div class="bg-white rounded-[2rem] p-6 md:p-8 border border-slate-100 shadow-sm space-y-6">
+        <h3 class="text-slate-800 font-black text-[10px] uppercase tracking-widest flex items-center gap-2 mb-2">
+          <ion-icon name="person-circle-outline" class="text-blue-500 text-lg"></ion-icon>
+          Datos Personales
+        </h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="form-group">
-            <label class="form-label">Nombre(s)</label>
-            <div class="input-wrapper">
-              <ion-icon name="person-outline" class="input-icon"></ion-icon>
-              <ion-input formControlName="name" placeholder="Ej: Juan" class="custom-input"></ion-input>
-            </div>
+          <div>
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Nombre(s)</label>
+            <ion-input formControlName="name" placeholder="Ej: Juan" class="bg-slate-50 rounded-xl px-4 py-2 mt-1 font-bold text-slate-800 border border-slate-100"></ion-input>
           </div>
-
-          <div class="form-group">
-            <label class="form-label">Apellidos</label>
-            <div class="input-wrapper">
-              <ion-icon name="person-outline" class="input-icon"></ion-icon> <ion-input formControlName="last_name" placeholder="Ej: Pérez" class="custom-input"></ion-input>
-            </div>
+          <div>
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Apellidos</label>
+            <ion-input formControlName="last_name" placeholder="Ej: Pérez" class="bg-slate-50 rounded-xl px-4 py-2 mt-1 font-bold text-slate-800 border border-slate-100"></ion-input>
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Correo Electrónico</label>
-          <div class="input-wrapper">
-            <ion-icon name="mail-outline" class="input-icon"></ion-icon>
-            <ion-input type="email" formControlName="email" placeholder="correo@edumex.com" class="custom-input"></ion-input>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Correo Electrónico</label>
+            <ion-input type="email" formControlName="email" placeholder="correo@ejemplo.com" class="bg-slate-50 rounded-xl px-4 py-2 mt-1 font-medium text-slate-800 border border-slate-100"></ion-input>
+          </div>
+          <div>
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Teléfono</label>
+            <ion-input type="tel" formControlName="phone" placeholder="10 dígitos" maxlength="10" class="bg-slate-50 rounded-xl px-4 py-2 mt-1 font-medium text-slate-800 border border-slate-100"></ion-input>
           </div>
         </div>
-
       </div>
 
-      <button
-        class="submit-modal-btn group"
-        [disabled]="form.invalid"
-        (click)="save()">
-        <span>Guardar Cambios</span>
-        <ion-icon name="save-outline" class="group-hover:scale-110 transition-transform"></ion-icon>
-      </button>
+      <div class="bg-slate-900 rounded-[2rem] p-6 md:p-8 shadow-xl space-y-6 animate__animated animate__fadeInUp"
+           *ngIf="user.customer_type === 'institutional'">
+
+        <h3 class="text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
+          <ion-icon name="business-outline" class="text-blue-400 text-lg"></ion-icon>
+          Información de la Institución
+        </h3>
+
+        <div>
+          <label class="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Nombre de la Institución / Razón Social</label>
+          <ion-input formControlName="institution_name" class="bg-slate-50 rounded-xl px-4 py-2 mt-1 text-slate-800 font-bold border border-slate-100"></ion-input>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">ID Fiscal (RFC)</label>
+            <ion-input formControlName="tax_id" class="bg-slate-50 rounded-xl px-4 py-2 mt-1 text-slate-800 font-bold uppercase border border-slate-100"></ion-input>
+          </div>
+          <div>
+            <label class="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Código Postal</label>
+            <ion-input formControlName="postal_code" class="bg-slate-50 rounded-xl px-4 py-2 mt-1 text-slate-800 font-bold border border-slate-100"></ion-input>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Dirección Fiscal Completa</label>
+          <ion-textarea formControlName="address" rows="2" class="bg-slate-50 rounded-xl px-4 py-2 mt-1 text-slate-800 font-bold border border-slate-100"></ion-textarea>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 pt-4 pb-8">
+        <button type="button" (click)="close()" class="flex-1 py-4 font-bold text-slate-400 hover:text-slate-600 transition-colors">
+          Cancelar
+        </button>
+        <button (click)="save()" [disabled]="form.invalid || isSubmitting"
+                class="flex-[2] bg-slate-900 text-white py-4! rounded-2xl! font-black uppercase tracking-widest shadow-xl shadow-slate-200 active:scale-95 transition-all disabled:opacity-50 flex justify-center items-center gap-2!">
+          <span *ngIf="!isSubmitting">Guardar Cambios</span>
+          <ion-spinner *ngIf="isSubmitting" name="crescent" color="light" class="w-5 h-5"></ion-spinner>
+        </button>
+      </div>
 
     </form>
   </div>
 
   <div *ngIf="!loading && error" class="flex flex-col items-center justify-center h-full w-full p-12 text-center">
-    <div class="p-4 bg-red-50 rounded-full mb-4">
-      <ion-icon name="alert-circle-outline" class="text-4xl text-red-500"></ion-icon>
+    <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4">
+      <ion-icon name="alert-circle-outline" class="text-3xl text-red-500"></ion-icon>
     </div>
-    <h3 class="text-slate-800 font-bold">Error de carga</h3>
-    <p class="text-slate-500 text-sm mt-1">No pudimos obtener la información del usuario a editar.</p>
-    <button (click)="close()" class="mt-6 text-blue-600 font-bold text-sm uppercase tracking-widest">Regresar</button>
+    <h3 class="text-slate-800 font-black uppercase tracking-tighter text-lg">Error de carga</h3>
+    <p class="text-slate-500 text-xs mt-2 font-medium">No pudimos obtener la información del usuario a editar.</p>
+    <button (click)="close()" class="mt-8 bg-white border border-slate-200 px-6 py-2 rounded-xl text-slate-600 font-bold text-[10px] uppercase tracking-widest shadow-sm">
+      Regresar
+    </button>
   </div>
 </ion-content>

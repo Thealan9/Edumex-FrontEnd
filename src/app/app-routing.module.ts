@@ -5,6 +5,8 @@ import { UserResolver } from './core/user.resolver';
 import { RoleGuard } from './core/role-guard';
 import { NavbarAdminComponent } from './components/navbar/navbar-admin/navbar-admin.component';
 import {NavbarUserComponent} from "./components/navbar/navbar-user/navbar-user.component";
+import {storeGuard} from "./core/store-guard";
+import {store2Guard} from "./core/store2-guard";
 
 const routes: Routes = [
   {
@@ -14,14 +16,17 @@ const routes: Routes = [
   },
   {
     path: 'login',
+    canActivate: [store2Guard],
     loadChildren: () => import('./auth/login/login.module').then( m => m.LoginPageModule)
   },
   {
     path: 'register',
+    canActivate: [store2Guard],
     loadChildren: () => import('./auth/register/register.module').then( m => m.RegisterPageModule)
   },
   {
     path: 'recuperar-contraseña',
+    canActivate: [store2Guard],
     loadChildren: () => import('./auth/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
   },
 //----------------------------------User---------------------------------------
@@ -31,11 +36,13 @@ const routes: Routes = [
     children: [
       {
         path: '',
+        canActivate: [storeGuard],
         loadChildren: () =>
           import('./user/home/home.module').then(m => m.HomePageModule)
       },
       {
         path: 'libros',
+        canActivate: [storeGuard],
         loadChildren: () =>
           import('./user/books/books.module').then(m => m.BooksPageModule)
       },
@@ -56,6 +63,7 @@ const routes: Routes = [
       },
       {
         path: 'libro/:id',
+        canActivate: [storeGuard],
         loadChildren: () => import('./user/book-detail/book-detail.module').then( m => m.BookDetailPageModule)
       },
     ]
@@ -124,7 +132,8 @@ const routes: Routes = [
     canMatch: [AuthGuard,RoleGuard],
     data: { roles: ['warehouseman'] },
     loadChildren: () => import('./warehouseman/orders/orders.module').then( m => m.OrdersPageModule)
-  },  {
+  },
+  {
     path: 'reset-password',
     loadChildren: () => import('./auth/reset-password/reset-password.module').then( m => m.ResetPasswordPageModule)
   },

@@ -38,10 +38,7 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {}
 
-  async ionViewWillEnter() {
-    const token = await this.auth.getToken();
-    if (token) this.router.navigateByUrl('/home/perfil', { replaceUrl: true });
-  }
+
 
   togglePassword() {
     this.showPassword = !this.showPassword;

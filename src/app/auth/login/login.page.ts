@@ -60,7 +60,9 @@ export class LoginPage implements OnInit {
         next: (res) => {
           this.cart.sanitizeCartForUser(res.user.customer_type);
           const role = res.user.role;
-          if (role === 'admin') this.router.navigateByUrl('/admin', { replaceUrl: true });
+          if (role === 'admin') {
+            window.location.href = '/admin';
+          }
           else if (role === 'warehouseman') this.router.navigateByUrl('/warehouseman', { replaceUrl: true });
           else this.router.navigateByUrl('/home', { replaceUrl: true });
         },

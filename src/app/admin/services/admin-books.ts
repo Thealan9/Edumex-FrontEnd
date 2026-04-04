@@ -111,6 +111,12 @@ export class AdminBooks {
     );
   }
 
+  findBookForMovement(id: number): Observable<{success: boolean, data: Book}> {
+    return this.http.get<{success: boolean, data: Book}>(
+      `${environment.apiUrl}/warehouseman/books/find-for-movement/${id}`
+    );
+  }
+
 
   // Ebooks CRUD
   getEbooks(search?: string, page: number = 1): Observable<any> {

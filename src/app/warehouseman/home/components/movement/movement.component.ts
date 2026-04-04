@@ -151,7 +151,6 @@ export class MovementComponent  implements OnInit {
 
 
   loadData() {
-    this.adminBooks.getBooks().subscribe(res => this.books = res.data);
 
     const bookId = this.pendingOrderData?.book_id || this.form.get('book_id')?.value;
 
@@ -162,6 +161,19 @@ export class MovementComponent  implements OnInit {
     } else {
       this.adminLocations.getLocations().subscribe(res => this.locations = res.data);
     }
+
+    if (this.pendingOrderData?.book_id) {
+      this.adminBooks.findBookForMovement(this.pendingOrderData.book_id).subscribe({
+        next: (res:any) => {
+          this.books = [res];
+          this.form.patchValue({ book_id: res.id });
+        },
+        error: () => this.showAlert('No se pudo cargar la información del libro', 'error')
+      });
+    } else {
+      this.adminBooks.getBooks().subscribe(res => this.books = res.data);
+    }
+
   }
   get availableLocations(): Location[] {
     return this.locations.filter(loc =>

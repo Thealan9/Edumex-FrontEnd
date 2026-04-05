@@ -3,6 +3,7 @@ import { Subscription, finalize } from 'rxjs';
 import { ModalController, AlertController } from '@ionic/angular';
 import { AdminLocation, Location } from '../services/admin-location';
 import { CreateEditComponent } from './components/create-edit/create-edit.component';
+
 @Component({
   selector: 'app-location',
   templateUrl: './location.page.html',
@@ -10,8 +11,12 @@ import { CreateEditComponent } from './components/create-edit/create-edit.compon
   standalone: false
 })
 export class LocationPage implements OnInit, OnDestroy {
+  allLocations: Location[] = [];
   locations: Location[] = [];
+
   loading: boolean = false;
+  showInactive: boolean = false;
+
   private refreshSub!: Subscription;
 
   constructor(
@@ -40,14 +45,32 @@ export class LocationPage implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: (res) => {
-        this.locations = res.data.sort((a: any, b: any) => {
-          if (a.active && !b.active) return -1;
-          if (!a.active && b.active) return 1;
-          return 0;
-        });
+        this.allLocations = res.data;
+        this.applyFilter(); // Aplicamos el filtro en lugar de asignar directo
       },
       error: () => this.showError('No se pudo cargar la lista de estantes.')
     });
+  }
+
+  // Función que maneja el filtro y el ordenamiento
+  applyFilter() {
+    // 1. Filtramos: Si showInactive es false, solo dejamos los que tienen active en true
+    let filtered = this.showInactive
+      ? [...this.allLocations]
+      : this.allLocations.filter(loc => loc.active);
+
+    // 2. Ordenamos: Activos arriba, inactivos abajo
+    this.locations = filtered.sort((a: any, b: any) => {
+      if (a.active && !b.active) return -1;
+      if (!a.active && b.active) return 1;
+      return 0;
+    });
+  }
+
+  // Función para el botón tipo Toggle
+  toggleInactive() {
+    this.showInactive = !this.showInactive;
+    this.applyFilter();
   }
 
   async openCreateEdit(location?: Location) {

@@ -6,10 +6,24 @@
         <p class="text-slate-500 text-sm mt-1">Control de estanterías, pasillos y optimización de espacio físico</p>
       </div>
 
-      <button (click)="openCreateEdit()" class="add-book-btn">
-        <ion-icon name="grid-outline"></ion-icon>
-        <span>Nuevo Estante</span>
-      </button>
+      <div class="flex items-center gap-4">
+
+        <div class="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-2xl border border-slate-200 cursor-pointer shadow-sm hover:bg-slate-50 transition-colors"
+             (click)="toggleInactive()">
+          <span class="text-[10px] font-black uppercase tracking-widest"
+                [class]="showInactive ? 'text-blue-600' : 'text-slate-400'">
+            Ver Inactivos
+          </span>
+          <ion-toggle [checked]="showInactive" mode="ios" color="primary" class="scale-75 m-0 pointer-events-none"></ion-toggle>
+        </div>
+
+        <button (click)="openCreateEdit()" class="add-book-btn">
+          <ion-icon name="grid-outline"></ion-icon>
+          <span>Nuevo Estante</span>
+        </button>
+
+      </div>
+
     </div>
   </ion-toolbar>
 </ion-header>

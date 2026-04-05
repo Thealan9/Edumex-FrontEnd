@@ -159,7 +159,12 @@ export class MovementComponent  implements OnInit {
         this.locations = res.data;
       });
     } else {
-      this.adminLocations.getLocations().subscribe(res => this.locations = res.data);
+      this.adminLocations.getLocations().subscribe({
+        next: (res) => {
+          this.locations = res.data.filter((loc: any) => loc.active === true);
+        },
+        error: (err) => console.error('Error cargando ubicaciones', err)
+      });
     }
 
     if (this.pendingOrderData?.book_id) {

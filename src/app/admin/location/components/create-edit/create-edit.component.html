@@ -35,6 +35,21 @@
           </p>
         </div>
 
+        <div class="form-group animate__animated animate__fadeIn" *ngIf="isEdit">
+          <label class="form-label">Estado Operativo</label>
+          <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-100 mt-1">
+            <div class="flex flex-col pr-4">
+              <span class="text-xs font-black uppercase text-slate-700">
+                {{ form.get('active')?.value ? 'Estante Activo' : 'Estante Desactivado' }}
+              </span>
+              <span class="text-[10px] text-slate-500 font-medium mt-0.5 leading-tight">
+                {{ form.get('active')?.value ? 'Disponible para almacenar e ingresar nuevo inventario.' : 'Bloqueado. No se podrá ingresar nueva mercancía aquí.' }}
+              </span>
+            </div>
+            <ion-toggle color="success" formControlName="active" mode="ios"></ion-toggle>
+          </div>
+        </div>
+
       </div>
 
       <button class="submit-modal-btn group disabled:opacity-50" (click)="submit()" [disabled]="form.invalid || isSubmitting">

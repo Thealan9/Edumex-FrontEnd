@@ -39,7 +39,13 @@ export class LocationPage implements OnInit, OnDestroy {
         if (event) event.target.complete();
       })
     ).subscribe({
-      next: (res) => this.locations = res.data,
+      next: (res) => {
+        this.locations = res.data.sort((a: any, b: any) => {
+          if (a.active && !b.active) return -1;
+          if (!a.active && b.active) return 1;
+          return 0;
+        });
+      },
       error: () => this.showError('No se pudo cargar la lista de estantes.')
     });
   }

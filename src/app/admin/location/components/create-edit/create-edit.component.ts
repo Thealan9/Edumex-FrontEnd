@@ -18,7 +18,8 @@ export class CreateEditComponent  implements OnInit {
 
   form = this.fb.group({
     code: ['', [Validators.required, Validators.maxLength(50)]],
-    max_capacity: [0, [Validators.required, Validators.min(1)]]
+    max_capacity: [0, [Validators.required, Validators.min(1)]],
+    active: [true]
   });
 
   constructor(

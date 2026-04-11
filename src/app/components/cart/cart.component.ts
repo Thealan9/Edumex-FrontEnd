@@ -1,6 +1,6 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -16,19 +16,16 @@ declare var paypal: any;
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  // IMPORTANTE: Se añadió ReactiveFormsModule aquí
+  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule]
 })
 export class CartComponent implements OnInit {
   savedAddresses: any[] = [];
   selectedAddressId: number | null = null;
   showNewAddressForm: boolean = false;
 
-  addressForm = {
-    recipient_name: '', recipient_phone: '', postal_code: '',
-    state: '', municipality: '', locality: '', neighborhood: '',
-    street: '', external_number: '', internal_number: '',
-    references: '', is_default: false
-  };
+  // Convertido a FormGroup
+  addressForm!: FormGroup;
 
   paymentMethod: 'stripe' | 'paypal' | null = null;
   isProcessing = false;
@@ -39,11 +36,33 @@ export class CartComponent implements OnInit {
     private modalCtrl: ModalController,
     public cartService: Cart,
     private http: HttpClient,
-    private router: Router
-  ) {}
+    private router: Router,
+    private fb: FormBuilder
+  ) {
+    this.initForm();
+  }
 
   ngOnInit() {
     this.loadAddresses();
+  }
+
+  // Se definen las validaciones
+  initForm() {
+    this.addressForm = this.fb.group({
+      recipient_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      recipient_phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      postal_code: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
+      state: ['', [Validators.required, Validators.maxLength(50)]],
+      municipality: ['', [Validators.required, Validators.maxLength(100)]],
+      locality: ['', [Validators.required, Validators.maxLength(100)]],
+      neighborhood: ['', [Validators.required, Validators.maxLength(100)]],
+      street: ['', [Validators.required, Validators.maxLength(100)]],
+      external_number: ['', [Validators.maxLength(20)]],
+      internal_number: ['', [Validators.maxLength(20)]],
+      references: ['', [Validators.required, Validators.maxLength(255)]],
+      is_default: [false],
+      is_sn: [false]
+    });
   }
 
   closeModal() {
@@ -62,13 +81,29 @@ export class CartComponent implements OnInit {
     });
   }
 
+  // Validación simplificada gracias a Reactive Forms
   isOrderReady() {
     if (!this.cartService.hasPhysicalItems()) return true;
+
     if (this.showNewAddressForm) {
-      return this.addressForm.recipient_name && this.addressForm.street &&
-        this.addressForm.locality && this.addressForm.postal_code;
+      const hasValidNumber = !!this.addressForm.get('external_number')?.value || this.addressForm.get('is_sn')?.value;
+      return this.addressForm.valid && hasValidNumber;
     }
+
     return this.selectedAddressId !== null;
+  }
+
+  // Control de deshabilitado de S/N integrado al FormGroup
+  toggleSN() {
+    const isSn = this.addressForm.get('is_sn')?.value;
+    const extControl = this.addressForm.get('external_number');
+
+    if (isSn) {
+      extControl?.setValue('');
+      extControl?.disable();
+    } else {
+      extControl?.enable();
+    }
   }
 
   async initStripe() {
@@ -132,7 +167,15 @@ export class CartComponent implements OnInit {
   processFinalCheckout(method: 'tarjeta' | 'paypal', referenceId: string) {
     const hasPhysical = this.cartService.hasPhysicalItems();
     const addressId = hasPhysical ? (this.showNewAddressForm ? null : this.selectedAddressId) : null;
-    const addressData = hasPhysical ? (this.showNewAddressForm ? this.addressForm : null) : null;
+
+    let addressData = null;
+    if (hasPhysical && this.showNewAddressForm) {
+      // Usamos getRawValue() para incluir campos deshabilitados (como el external_number)
+      addressData = { ...this.addressForm.getRawValue() };
+      if (addressData.is_sn) {
+        addressData.external_number = 'S/N';
+      }
+    }
 
     this.cartService.checkout(addressId, addressData, method, referenceId).subscribe({
       next: async (res) => {

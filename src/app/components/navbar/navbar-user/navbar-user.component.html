@@ -173,21 +173,27 @@
         <span>Productos</span>
         <span>${{ cartService.subtotal | number:'1.2-2' }}</span>
       </div>
+
       <div *ngIf="cartService.totalSavings > 0 && user" class="flex justify-between text-[10px] font-bold text-emerald-600 uppercase">
         <span>Tu Ahorro</span>
         <span>- ${{ cartService.totalSavings | number:'1.2-2' }}</span>
       </div>
-      <div class="flex justify-between text-[10px] font-bold uppercase text-[#7890A8]">
-        <span>Envío (Calculado en Checkout)</span>
+
+      <div class="flex justify-between text-[10px] font-bold uppercase"
+           [class.text-emerald-600]="cartService.shippingCost === 0"
+           [class.text-[#7890A8]]="cartService.shippingCost > 0">
+        <span>Envío</span>
+        <span>{{ cartService.shippingCost === 0 ? '¡GRATIS!' : ('$' + cartService.shippingCost) }}</span>
       </div>
+
       <div class="flex justify-between items-center pt-2 border-t border-slate-200 mt-2">
-        <span class="text-[#181848] font-black text-xs uppercase">Subtotal</span>
-        <span class="text-xl font-black text-[#304878]">${{ cartService.amountAfterDiscount | number:'1.2-2' }}</span>
+        <span class="text-[#181848] font-black text-xs uppercase">Total</span>
+        <span class="text-xl font-black text-[#304878]">${{ cartService.finalTotal | number:'1.2-2' }}</span>
       </div>
     </div>
 
-    <button *ngIf="user" (click)="openCheckoutModal()" class="w-full bg-[#181848] hover:bg-[#304878] text-white p-3 rounded-2xl font-black uppercase tracking-widest shadow-lg transition-all">
-      Proceder al Pago
+    <button *ngIf="user" (click)="openCheckoutModal()" class="w-full bg-[#181848] hover:bg-[#304878] text-white p-3 rounded-2xl! font-black uppercase tracking-widest shadow-lg transition-all">
+      Pagar
     </button>
 
     <p *ngIf="!user" (click)="closeCart()" routerLink="/login" class="text-center text-[10px] font-bold text-[#304878] uppercase mt-4 cursor-pointer">

@@ -1,7 +1,6 @@
 <ion-header class="ion-no-border">
   <ion-toolbar class="--background: #181848; color: white;">
     <ion-title class="font-black uppercase tracking-widest text-sm">
-      Finalizar Compra
     </ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="closeModal()"><ion-icon name="close-outline"></ion-icon></ion-button>
@@ -17,7 +16,7 @@
       <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100" *ngIf="cartService.hasPhysicalItems()">
         <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
           <ion-icon name="location" class="text-[#304878] text-xl"></ion-icon>
-          <h2 class="text-[#181848] font-bold text-lg">1. Dirección de envío</h2>
+          <h2 class="text-[#181848] font-bold text-lg">Dirección de envío</h2>
         </div>
 
         <div class="flex justify-end mb-3">
@@ -53,52 +52,63 @@
           </div>
         </div>
 
-        <div *ngIf="showNewAddressForm" class="mt-4 space-y-4">
+        <form [formGroup]="addressForm" *ngIf="showNewAddressForm" class="mt-4 space-y-4">
           <div class="space-y-3">
             <div class="input-wrapper">
-              <ion-input [(ngModel)]="addressForm.recipient_name" placeholder="¿Quién recibe?" class="custom-input"></ion-input>
+              <ion-input formControlName="recipient_name" placeholder="¿Quién recibe?" class="custom-input"></ion-input>
             </div>
             <div class="grid grid-cols-2 gap-3">
-              <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.recipient_phone" placeholder="Teléfono" class="custom-input"></ion-input></div>
-              <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.postal_code" placeholder="CP" class="custom-input"></ion-input></div>
+              <div class="input-wrapper"><ion-input formControlName="recipient_phone" type="tel" placeholder="Teléfono" maxlength="10" class="custom-input"></ion-input></div>
+              <div class="input-wrapper"><ion-input formControlName="postal_code" type="tel" placeholder="CP" maxlength="5" class="custom-input"></ion-input></div>
             </div>
             <div class="grid grid-cols-2 gap-3">
-              <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.state" placeholder="Estado" class="custom-input"></ion-input></div>
-              <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.municipality" placeholder="Municipio" class="custom-input"></ion-input></div>
+              <div class="input-wrapper"><ion-input formControlName="state" placeholder="Estado" class="custom-input"></ion-input></div>
+              <div class="input-wrapper"><ion-input formControlName="municipality" placeholder="Municipio" class="custom-input"></ion-input></div>
             </div>
             <div class="grid grid-cols-2 gap-3">
-              <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.locality" placeholder="Ciudad" class="custom-input"></ion-input></div>
-              <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.neighborhood" placeholder="Colonia" class="custom-input"></ion-input></div>
+              <div class="input-wrapper"><ion-input formControlName="locality" placeholder="Ciudad" class="custom-input"></ion-input></div>
+              <div class="input-wrapper"><ion-input formControlName="neighborhood" placeholder="Colonia" class="custom-input"></ion-input></div>
             </div>
-              <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.street" placeholder="Calle" class="custom-input"></ion-input></div>
-            <div class="grid grid-cols-2 gap-3">
-              <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.external_number" placeholder="# Ext" class="custom-input"></ion-input></div>
-              <div class="input-wrapper"><ion-input [(ngModel)]="addressForm.internal_number" placeholder="# Int (opcional)" class="custom-input"></ion-input></div>
+
+            <div class="input-wrapper"><ion-input formControlName="street" placeholder="Calle" class="custom-input"></ion-input></div>
+
+            <div class="grid grid-cols-2 gap-3 items-start">
+              <div class="space-y-2">
+                <div class="input-wrapper" [class.opacity-50]="addressForm.get('is_sn')?.value">
+                  <ion-input formControlName="external_number"
+                             placeholder="# Ext"
+                             class="custom-input">
+                  </ion-input>
+                </div>
+                <ion-item lines="none" class="--background: transparent; font-size: 10px; --min-height: 0; padding:0; margin:0;">
+                  <ion-checkbox formControlName="is_sn" (ionChange)="toggleSN()" labelPlacement="end">
+                    <span class="ml-1 font-bold text-slate-500">Sin Número (S/N)</span>
+                  </ion-checkbox>
+                </ion-item>
+              </div>
+
+              <div class="input-wrapper"><ion-input formControlName="internal_number" placeholder="# Int (opcional)" class="custom-input"></ion-input></div>
             </div>
+
             <div class="mt-2">
               <label class="form-label text-[10px] font-bold text-slate-400 uppercase tracking-widest">Referencias / Indicaciones</label>
               <div class="input-wrapper !items-start p-2">
                 <ion-icon name="map-outline" class="input-icon mt-1"></ion-icon>
-                <ion-textarea [(ngModel)]="addressForm.references"
+                <ion-textarea formControlName="references"
                               placeholder="Ej. Portón azul, frente al parque, entre calle X y Y..."
                               rows="2"
                               class="custom-input !min-h-[60px] text-xs">
                 </ion-textarea>
               </div>
             </div>
-            <ion-item lines="none" class="--background: transparent; font-size: 11px; --padding-start: 0;">
-              <ion-checkbox [(ngModel)]="addressForm.is_default" labelPlacement="end">
-                <span class="ml-2 font-bold text-[#181848]">Predeterminada</span>
-              </ion-checkbox>
-            </ion-item>
           </div>
-        </div>
+        </form>
       </div>
 
       <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100" [class.opacity-50]="!isOrderReady()">
         <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
           <ion-icon name="card" class="text-[#304878] text-xl"></ion-icon>
-          <h2 class="text-[#181848] font-bold text-lg">2. Método de Pago</h2>
+          <h2 class="text-[#181848] font-bold text-lg">Método de Pago</h2>
         </div>
 
         <div *ngIf="!isOrderReady()" class="text-center py-4">
@@ -200,7 +210,7 @@
           </div>
 
           <p *ngIf="!isOrderReady()" class="text-center text-[10px] font-bold text-[#F0A818] uppercase mt-4">
-            Selecciona una dirección para habilitar el pago
+            Selecciona o crea una dirección para continuar
           </p>
         </div>
 

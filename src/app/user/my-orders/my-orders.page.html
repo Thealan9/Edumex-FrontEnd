@@ -8,7 +8,6 @@
           <ion-icon name="cube-outline" class="text-xl"></ion-icon>
         </div>
         <div>
-          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Pedido #{{ order.id }}</p>
           <div class="flex items-center gap-1.5 mt-1">
             <div [class]="order.status === 'delivered' ? 'bg-emerald-500' : 'bg-amber-500'" class="w-1.5 h-1.5 rounded-full animate-pulse"></div>
             <p class="text-[10px] font-black uppercase" [ngClass]="order.status === 'delivered' ? 'text-emerald-600' : 'text-amber-600'">

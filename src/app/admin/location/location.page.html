@@ -48,10 +48,12 @@
 
           <div class="flex gap-2 relative z-10">
             <button (click)="openCreateEdit(loc)"
+                    title="Editar"
                     class="bg-slate-50 text-slate-400 p-3 rounded-2xl hover:bg-slate-900 hover:text-white transition-all duration-300 shadow-sm">
               <ion-icon name="options-outline" class="text-xl"></ion-icon>
             </button>
             <button (click)="confirmDelete(loc)"
+                    title="Eliminar"
                     class="bg-slate-50 text-slate-400 p-3 rounded-2xl hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm">
               <ion-icon name="trash-outline" class="text-xl"></ion-icon>
             </button>

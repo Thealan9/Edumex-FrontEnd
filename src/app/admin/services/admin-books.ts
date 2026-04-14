@@ -66,10 +66,18 @@ export class AdminBooks {
 
   constructor(private http: HttpClient, private auth: Auth,) {}
 
-  getBooks(search?: string,page: number = 1): Observable<{success: boolean, data: Book[]}> {
+  getBooks(filters?: any, page: number = 1): Observable<any> {
     let params = new HttpParams().set('page', page.toString());
-    if (search) params = params.set('search', search);
-    return this.http.get<{success: boolean, data: Book[]}>(this.baseUrl, { params });
+
+    if (filters) {
+      if (filters.searchText) params = params.set('search', filters.searchText);
+      if (filters.category && filters.category !== 'Todos') params = params.set('category', filters.category);
+      if (filters.level && filters.level !== 'Todos') params = params.set('level', filters.level);
+      if (filters.type && filters.type !== 'Todos') params = params.set('type', filters.type);
+      params = params.set('onlyStock', filters.onlyStock ? 'true' : 'false');
+    }
+
+    return this.http.get<any>(this.baseUrl, { params });
   }
 
   getBookNameId():Observable<any> {

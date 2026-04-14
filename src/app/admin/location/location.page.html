@@ -7,7 +7,6 @@
       </div>
 
       <div class="flex items-center gap-4">
-
         <div class="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-2xl border border-slate-200 cursor-pointer shadow-sm hover:bg-slate-50 transition-colors"
              (click)="toggleInactive()">
           <span class="text-[10px] font-black uppercase tracking-widest"
@@ -21,27 +20,25 @@
           <ion-icon name="grid-outline"></ion-icon>
           <span>Nuevo Estante</span>
         </button>
-
       </div>
-
     </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="bg-[#F8FAFC]">
   <div class="p-8 max-w-[1600px] mx-auto">
-
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
 
       <div *ngFor="let loc of locations"
            class="group bg-white rounded-[2.5rem] p-7 border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col relative overflow-hidden"
            [class.opacity-60]="!loc.active"
-           [class.grayscale]="!loc.active"> <div [class]="getProgressBarClass(loc)"
-                                                 class="absolute top-0 left-0 right-0 h-1.5 opacity-20 group-hover:opacity-100 transition-all duration-500"
-                                                 [class.!bg-slate-300]="!loc.active"> </div>
+           [class.grayscale]="!loc.active">
+        <div [class]="getProgressBarClass(loc)"
+             class="absolute top-0 left-0 right-0 h-1.5 opacity-20 group-hover:opacity-100 transition-all duration-500"
+             [class.!bg-slate-300]="!loc.active">
+        </div>
 
         <div class="flex justify-between items-center mb-8">
-
           <div [class]="!loc.active ? 'bg-slate-100 text-slate-400' : getCapacityColor(loc).replace('text', 'bg').replace('600', '50')"
                class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110">
             <ion-icon [name]="!loc.active ? 'lock-closed' : (calculatePercent(loc) >= 90 ? 'warning' : 'cube')"
@@ -49,10 +46,16 @@
                       class="text-2xl"></ion-icon>
           </div>
 
-          <button (click)="openCreateEdit(loc)"
-                  class="bg-slate-50 text-slate-400 p-3 rounded-2xl hover:bg-slate-900 hover:text-white transition-all duration-300 shadow-sm relative z-10">
-            <ion-icon name="options-outline" class="text-xl"></ion-icon>
-          </button>
+          <div class="flex gap-2 relative z-10">
+            <button (click)="openCreateEdit(loc)"
+                    class="bg-slate-50 text-slate-400 p-3 rounded-2xl hover:bg-slate-900 hover:text-white transition-all duration-300 shadow-sm">
+              <ion-icon name="options-outline" class="text-xl"></ion-icon>
+            </button>
+            <button (click)="confirmDelete(loc)"
+                    class="bg-slate-50 text-slate-400 p-3 rounded-2xl hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm">
+              <ion-icon name="trash-outline" class="text-xl"></ion-icon>
+            </button>
+          </div>
         </div>
 
         <div class="mb-8 flex items-center gap-3">
@@ -86,7 +89,6 @@
         </div>
 
         <div class="mt-10 pt-5 border-t border-slate-50 flex justify-between items-center">
-
           <div *ngIf="!loc.active" class="flex items-center gap-2">
             <div class="w-3 h-3 rounded-full bg-slate-400"></div>
             <span class="text-[11px] font-black uppercase tracking-widest text-slate-500">
@@ -106,7 +108,6 @@
               {{ calculatePercent(loc) < 100 ? (100 - calculatePercent(loc)) + '% Libre' : 'Sin espacio' }}
             </span>
           </div>
-
         </div>
 
       </div>

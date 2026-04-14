@@ -46,20 +46,17 @@ export class LocationPage implements OnInit, OnDestroy {
     ).subscribe({
       next: (res) => {
         this.allLocations = res.data;
-        this.applyFilter(); // Aplicamos el filtro en lugar de asignar directo
+        this.applyFilter();
       },
       error: () => this.showError('No se pudo cargar la lista de estantes.')
     });
   }
 
-  // Función que maneja el filtro y el ordenamiento
   applyFilter() {
-    // 1. Filtramos: Si showInactive es false, solo dejamos los que tienen active en true
     let filtered = this.showInactive
       ? [...this.allLocations]
       : this.allLocations.filter(loc => loc.active);
 
-    // 2. Ordenamos: Activos arriba, inactivos abajo
     this.locations = filtered.sort((a: any, b: any) => {
       if (a.active && !b.active) return -1;
       if (!a.active && b.active) return 1;
@@ -67,7 +64,6 @@ export class LocationPage implements OnInit, OnDestroy {
     });
   }
 
-  // Función para el botón tipo Toggle
   toggleInactive() {
     this.showInactive = !this.showInactive;
     this.applyFilter();
@@ -83,6 +79,41 @@ export class LocationPage implements OnInit, OnDestroy {
     await modal.present();
     const { data } = await modal.onWillDismiss();
     if (data?.refresh) this.loadLocations();
+  }
+
+  async confirmDelete(loc: Location) {
+    const alert = await this.alertCtrl.create({
+      header: '¿Eliminar estante?',
+      message: `¿Estás seguro de que deseas eliminar el estante ${loc.code}? Esta acción no se puede deshacer.`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'text-slate-500'
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          cssClass: 'text-red-600 font-bold',
+          handler: () => {
+            this.deleteLocation(loc.id!);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private deleteLocation(id: number) {
+    this.loading = true;
+    this.adminLocations.deleteLocation(id).pipe(
+      finalize(() => this.loading = false)
+    ).subscribe({
+      next: () => {
+      },
+      error: () => this.showError('No se pudo eliminar el estante. Es posible que contenga libros asignados.')
+    });
   }
 
 

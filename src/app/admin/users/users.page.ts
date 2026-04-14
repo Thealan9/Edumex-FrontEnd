@@ -3,15 +3,15 @@ import { AdminUsers } from '../services/admin-users';
 import { User } from 'src/app/interfaces/admin/user.model';
 import { Auth } from 'src/app/core/auth';
 import { AlertComponent } from 'src/app/components/alert/alert.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {CreateEditComponent} from "./components/create-edit/create-edit.component";
+import { CreateEditComponent } from "./components/create-edit/create-edit.component";
 
 @Component({
   selector: 'app-users',
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
-  standalone:false
+  standalone: false
 })
 export class UsersPage implements OnInit {
 
@@ -20,16 +20,22 @@ export class UsersPage implements OnInit {
   authUser!: User;
 
   private snack = inject(MatSnackBar);
-  constructor(private adminUsers: AdminUsers,private auth: Auth,private modalCtrl: ModalController,) { }
+
+  constructor(
+    private adminUsers: AdminUsers,
+    private auth: Auth,
+    private modalCtrl: ModalController,
+    private alertCtrl: AlertController
+  ) { }
 
   async ngOnInit() {
     const user = await this.auth.getUser();
 
     if (user) {
-    this.authUser = user;
-  } else {
-    console.warn('No se encontró el usuario');
-  }
+      this.authUser = user;
+    } else {
+      console.warn('No se encontró el usuario');
+    }
 
     this.loadUsers();
 
@@ -66,8 +72,34 @@ export class UsersPage implements OnInit {
     });
   }
 
-  delete(user: User){
-    if (!confirm('¿Eliminar usuario?')) return;
+
+  async delete(user: User) {
+    const userName = user.name ? `a ${user.name}` : 'a este usuario';
+
+    const alert = await this.alertCtrl.create({
+      header: '¿Eliminar usuario?',
+      message: `¿Estás seguro de que deseas eliminar ${userName}? Esta acción no se puede deshacer.`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'text-slate-500'
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          cssClass: 'text-red-600 font-bold',
+          handler: () => {
+            this.executeDelete(user);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private executeDelete(user: User) {
     this.adminUsers.deleteUser(user.id!).subscribe({
       next: (res) => {
         this.showAlert(res.message, 'success');
@@ -78,18 +110,18 @@ export class UsersPage implements OnInit {
   }
 
   async showAlert(
-        message: string,
-        type: 'success' | 'error' | 'warning'
-      ) {
-        const modal = await this.modalCtrl.create({
-          component: AlertComponent,
-          componentProps: { message, type },
-          cssClass: 'small-alert-modal',
-          backdropDismiss: false,
-        });
+    message: string,
+    type: 'success' | 'error' | 'warning'
+  ) {
+    const modal = await this.modalCtrl.create({
+      component: AlertComponent,
+      componentProps: { message, type },
+      cssClass: 'small-alert-modal',
+      backdropDismiss: false,
+    });
 
-        await modal.present();
-    }
+    await modal.present();
+  }
 
   showToast(message: string, type: 'success' | 'error' | 'warning') {
     this.snack.open(message, '✖', {
@@ -101,29 +133,29 @@ export class UsersPage implements OnInit {
   }
 
   async openCreate() {
-      const modal = await this.modalCtrl.create({
-        component: CreateEditComponent,
-        cssClass: 'book-modal'
-      });
+    const modal = await this.modalCtrl.create({
+      component: CreateEditComponent,
+      cssClass: 'book-modal'
+    });
 
-      modal.onDidDismiss().then((res) => {
-      });
+    modal.onDidDismiss().then((res) => {
+    });
 
-      await modal.present();
-    }
+    await modal.present();
+  }
 
-   async openEdit(user : User) {
-        const modal = await this.modalCtrl.create({
-          component: CreateEditComponent,
-          cssClass: 'book-modal',
-          componentProps: {
-            data: user
-          },
-        });
-        modal.onDidDismiss().then((res) => {
-           });
+  async openEdit(user: User) {
+    const modal = await this.modalCtrl.create({
+      component: CreateEditComponent,
+      cssClass: 'book-modal',
+      componentProps: {
+        data: user
+      },
+    });
+    modal.onDidDismiss().then((res) => {
+    });
 
-        await modal.present();
-      }
+    await modal.present();
+  }
 
 }

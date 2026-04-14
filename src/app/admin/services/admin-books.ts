@@ -138,6 +138,12 @@ export class AdminBooks {
     );
   }
 
+  deleteEbook(id:number){
+    return this.http.delete(`${environment.apiUrl}/admin/ebooks/${id}`).pipe(
+      tap(() => this._refresh.next())
+    );
+  }
+
   toggleEbookStatus(id: number): Observable<any> {
     return this.http.patch(`${environment.apiUrl}/admin/ebooks/${id}/status`, {});
   }

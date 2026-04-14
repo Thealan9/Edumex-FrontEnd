@@ -39,7 +39,7 @@
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
       <div *ngFor="let item of books"
            (click)="viewMode === 'physical' ? openCreateEdit(item) : openEbookModal(item)"
-           class="group bg-white rounded-[2.5rem] p-4 border border-slate-100 shadow-sm flex flex-col transition-all duration-500">
+           class="group bg-white rounded-[2.5rem] p-4 border border-slate-100 shadow-sm flex flex-col transition-all duration-500 cursor-pointer hover:shadow-lg">
 
         <div class="relative aspect-[3/4] rounded-[2rem] overflow-hidden bg-slate-100 shadow-inner">
           <img [src]="item.image_url || 'assets/no-book.png'" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700">
@@ -64,14 +64,15 @@
           </div>
         </div>
 
-        <div class="mt-4 flex gap-2 items-center pt-2">
+        <div class="mt-4 flex justify-between items-center pt-2 w-full">
 
-            <ion-icon name="settings-outline" class="text-lg"></ion-icon>
-
+          <button (click)="confirmDelete(item, $event)" class="text-slate-400 hover:text-red-500 p-2 rounded-xl transition-colors">
+            <ion-icon name="trash-outline" class="text-xl"></ion-icon>
+          </button>
 
           <div class="bg-light px-3 py-1.5 rounded-2xl flex items-center gap-2" (click)="$event.stopPropagation()">
             <span class="text-[8px] font-black text-navy uppercase tracking-tighter">{{ item.active ? 'Activo' : 'Off' }}</span>
-            <ion-toggle [checked]="item.active" (ionChange)="toggleStatus(item)" color="success" class="scale-75"></ion-toggle>
+            <ion-toggle [checked]="item.active" (ionChange)="toggleStatus(item)" color="success" class="scale-75 m-0"></ion-toggle>
           </div>
         </div>
       </div>

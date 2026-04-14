@@ -29,7 +29,7 @@
           <div class="col-span-12 md:col-span-7">
             <label class="form-label !text-[9px]">Pallet / Estante</label>
             <div class="input-wrapper bg-white">
-              <ion-select formControlName="temp_location_id" placeholder="Seleccionar ubicación">
+              <ion-select formControlName="temp_location_id" placeholder="Seleccionar ubicación" interface="popover">
                 <ion-select-option *ngFor="let loc of availableLocations" [value]="loc.id">
                   {{ loc.code }}
                   <ng-container *ngIf="type === 'output' || pendingOrderData?.type === 'output_order'">

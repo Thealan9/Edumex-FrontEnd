@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AdminBooks, Book } from '../services/admin-books';
-import {Subject, Subscription} from 'rxjs';
-import {AlertController, LoadingController, ModalController} from '@ionic/angular';
-import {CreateEditComponent} from "./components/create-edit/create-edit.component";
+import { Subject, Subscription } from 'rxjs';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
+import { CreateEditComponent } from "./components/create-edit/create-edit.component";
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import {CreateEditEbooksComponent} from "./components/create-edit-ebooks/create-edit-ebooks.component";
+import { CreateEditEbooksComponent } from "./components/create-edit-ebooks/create-edit-ebooks.component";
 
 @Component({
   selector: 'app-books',
@@ -24,11 +24,12 @@ export class BooksPage implements OnInit, OnDestroy {
   private searchSubject = new Subject<string>();
   private refreshSub!: Subscription;
   private searchSub!: Subscription;
+
   constructor(
     private bookService: AdminBooks,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
-  private modalCtrl: ModalController,
+    private modalCtrl: ModalController,
   ) {}
 
   ngOnInit() {
@@ -58,8 +59,8 @@ export class BooksPage implements OnInit, OnDestroy {
     this.currentPage = page;
 
     const request = this.viewMode === 'physical'
-      ? this.bookService.getBooks(this.searchTerm,page)
-      : this.bookService.getEbooks(this.searchTerm,page);
+      ? this.bookService.getBooks(this.searchTerm, page)
+      : this.bookService.getEbooks(this.searchTerm, page);
 
     request.subscribe({
       next: (res) => {
@@ -86,6 +87,7 @@ export class BooksPage implements OnInit, OnDestroy {
     const targetPage = next ? this.currentPage + 1 : this.currentPage - 1;
     this.loadBooks(null, targetPage);
   }
+
   async openCreateEdit(book?: Book) {
     const modal = await this.modalCtrl.create({
       component: CreateEditComponent,
@@ -100,6 +102,7 @@ export class BooksPage implements OnInit, OnDestroy {
       this.loadBooks();
     }
   }
+
   async openEbookModal(ebook?: any) {
     const modal = await this.modalCtrl.create({
       component: CreateEditEbooksComponent,
@@ -114,7 +117,6 @@ export class BooksPage implements OnInit, OnDestroy {
   triggerFileInput(id: number) {
     document.getElementById('file-input-' + id)?.click();
   }
-
 
   async onFileSelected(event: any, bookId: number) {
     const file: File = event.target.files[0];
@@ -134,7 +136,6 @@ export class BooksPage implements OnInit, OnDestroy {
     this.bookService.uploadImage(bookId, file).subscribe({
       next: () => {
         loading.dismiss();
-        // El refresh$ del servicio hará que loadBooks() se dispare solo
       },
       error: (err) => {
         loading.dismiss();
@@ -143,15 +144,11 @@ export class BooksPage implements OnInit, OnDestroy {
     });
   }
 
-
   onSearch(event: any) {
     const value = event.detail.value || '';
     this.currentPage = 1;
     this.searchSubject.next(value);
   }
-
-
-
 
   toggleStatus(item: any) {
     const newStatus = !item.active;
@@ -162,6 +159,55 @@ export class BooksPage implements OnInit, OnDestroy {
     request.subscribe({
       next: () => item.active = newStatus,
       error: () => this.loadBooks()
+    });
+  }
+
+  async confirmDelete(item: any, event: Event) {
+    event.stopPropagation();
+
+    const tipo = this.viewMode === 'physical' ? 'libro físico' : 'ebook';
+
+    const alert = await this.alertCtrl.create({
+      header: '¿Eliminar elemento?',
+      message: `¿Estás seguro de que deseas eliminar el ${tipo} ${item.title}? Esta acción no se puede deshacer.`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'text-slate-500'
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          cssClass: 'text-red-600 font-bold',
+          handler: () => {
+            this.deleteItem(item.id);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private deleteItem(id: number) {
+    this.loading = true;
+    const request = this.viewMode === 'physical'
+      ? this.bookService.deleteBook(id)
+      : this.bookService.deleteEbook(id);
+
+    request.subscribe({
+      next: () => {
+      },
+      error: async (err) => {
+        this.loading = false;
+        const alert = await this.alertCtrl.create({
+          header: 'No se puede eliminar',
+          message: 'Es posible que este elemento esté asociado a pedidos, inventario u otros registros y no pueda ser eliminado.',
+          buttons: ['OK']
+        });
+        await alert.present();
+      }
     });
   }
 }

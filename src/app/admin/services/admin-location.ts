@@ -48,4 +48,10 @@ export class AdminLocation {
       tap(() => this._refresh.next())
     );
   }
+
+  deleteLocation(id: number) {{
+    return this.http.delete(`${this.baseUrl}/${id}`).pipe(
+      tap(() => this._refresh.next())
+    );
+  }}
 }

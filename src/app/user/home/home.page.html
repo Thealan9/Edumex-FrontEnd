@@ -1,0 +1,123 @@
+<div class="bg-[#F8FAFC] min-h-full pb-16">
+
+  <div class="relative w-full h-[45vh] md:h-[55vh] bg-slate-900">
+
+    <swiper-container pagination="true" pagination-clickable="true" autoplay-delay="4000" loop="true" class="w-full h-full">
+
+      <swiper-slide>
+        <img src="assets/carrusel1.png" class="w-full h-full object-contain opacity-90" />
+      </swiper-slide>
+
+      <swiper-slide>
+        <img src="assets/carrusel2.png" class="w-full h-full object-contain opacity-90" />
+      </swiper-slide>
+
+      <swiper-slide>
+        <img src="assets/carrusel3.png" class="w-full h-full object-contain opacity-90" />
+      </swiper-slide>
+
+      <swiper-slide>
+        <img src="assets/carrusel4.png" class="w-full h-full object-contain opacity-90" />
+      </swiper-slide>
+
+    </swiper-container>
+
+    <div class="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-[#F8FAFC] to-transparent z-10 pointer-events-none"></div>  </div>
+
+  <div class="max-w-7xl mx-auto px-4 md:px-8 relative z-20 mt-8 md:mt-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <div class="bg-white/90 backdrop-blur-xl p-8 rounded-[2rem] border border-slate-100 shadow-[0_10px_40px_rgb(0,0,0,0.08)] hover:-translate-y-2 transition-transform duration-500 group">
+        <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform duration-500">
+          <ion-icon name="cube-outline"></ion-icon>
+        </div>
+        <h3 class="text-xl font-black text-slate-800 tracking-tight mb-2">Envíos a todo el país</h3>
+        <p class="text-slate-500 text-sm font-medium leading-relaxed">Explora miles de títulos físicos de todos los niveles educativos. Preparamos tu pedido y lo entregamos en tu puerta.</p>
+      </div>
+
+      <div class="bg-white/90 backdrop-blur-xl p-8 rounded-[2rem] border border-slate-100 shadow-[0_10px_40px_rgb(0,0,0,0.08)] hover:-translate-y-2 transition-transform duration-500 group">
+        <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform duration-500">
+          <ion-icon name="tablet-portrait-outline"></ion-icon>
+        </div>
+        <h3 class="text-xl font-black text-slate-800 tracking-tight mb-2">Librería Digital</h3>
+        <p class="text-slate-500 text-sm font-medium leading-relaxed">Accede al instante a nuestra colección de Ebooks. Aprende a tu ritmo, en cualquier lugar y desde cualquier dispositivo.</p>
+      </div>
+
+      <div class="bg-white/90 backdrop-blur-xl p-8 rounded-[2rem] border border-slate-100 shadow-[0_10px_40px_rgb(0,0,0,0.08)] hover:-translate-y-2 transition-transform duration-500 group">
+        <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform duration-500">
+          <ion-icon name="pricetags-outline"></ion-icon>
+        </div>
+        <h3 class="text-xl font-black text-slate-800 tracking-tight mb-2">Descuentos Exclusivos</h3>
+        <p class="text-slate-500 text-sm font-medium leading-relaxed">Aprovecha precios especiales para instituciones y ahorra más llevando nuestros paquetes por volumen.</p>
+      </div>
+
+    </div>
+
+    <div class="mt-16 text-center">
+      <h2 class="text-3xl! font-black text-slate-800 mb-6 tracking-tight">¿Listo para tu próxima lectura?</h2>
+      <button (click)="goToCatalog()" class="px-10! py-4! bg-blue-600! hover:bg-blue-700 text-white rounded-2xl! font-black text-lg transition-all duration-300 shadow-[0_10px_20px_-10px_rgba(37,99,235,0.6)] hover:shadow-xl hover:-translate-y-1 inline-flex items-center justify-center gap-3 active:scale-95">
+        <ion-icon name="search-outline" class="text-xl"></ion-icon>
+        Explorar el Catálogo
+      </button>
+    </div>
+
+  </div>
+
+  <footer class="bg-white border-t border-slate-200 mt-16 pt-12 pb-8">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-10">
+
+        <div class="space-y-4">
+          <div class="flex items-center gap-2">
+            <img src="assets/logo-educamex.png" alt="EDUMEX Logo" class="w-8 h-8 object-contain">
+
+            <span class="text-xl font-black tracking-tighter text-slate-800">EDUMEX</span>
+          </div>
+          <p class="text-slate-500 text-sm leading-relaxed">
+            Tu distribuidora de confianza. Comprometidos con llevar la mejor literatura educativa y recursos digitales a cada rincón de México.
+          </p>
+        </div>
+
+        <div class="md:pl-10">
+          <h4 class="text-slate-800 font-bold uppercase tracking-wider text-[11px] mb-5">Explora</h4>
+          <ul class="space-y-3 text-sm text-slate-500 font-medium">
+            <li><a routerLink="/home" class="hover:text-blue-600 transition-colors cursor-pointer">Inicio</a></li>
+            <li><a routerLink="/home/libros" class="hover:text-blue-600 transition-colors cursor-pointer">Catálogo de Libros</a></li>
+            <li><a routerLink="/home/pedidos" class="hover:text-blue-600 transition-colors cursor-pointer">Mis Pedidos</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-slate-800 font-bold uppercase tracking-wider text-[11px] mb-5">Datos de Contacto</h4>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <div class="mt-1 w-5 h-5 text-blue-500 shrink-0"><ion-icon name="mail-outline"></ion-icon></div>
+              <span class="text-sm text-slate-500 font-medium tracking-tight">edumexcontacto&#64;gmail.com</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="mt-1 w-5 h-5 text-blue-500 shrink-0"><ion-icon name="call-outline"></ion-icon></div>
+              <span class="text-sm text-slate-500 font-medium tracking-tight">+52 (78) 4118 8434</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="mt-1 w-5 h-5 text-blue-500 shrink-0"><ion-icon name="location-outline"></ion-icon></div>
+              <span class="text-sm text-slate-500 font-medium leading-snug">
+                 5 de Mayo 784, Barrio del Zapote,93400<br>
+                Papantla de Olarte, Ver.
+              </span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest">
+          &copy; 2026 EDUMEX. Todos los derechos reservados.
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+</div>

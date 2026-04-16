@@ -1,29 +1,44 @@
 <ion-content class="bg-slate-50">
 
-  <div class="p-4 space-y-3" *ngIf="!selectedOrder">
-    <div *ngFor="let order of orders" (click)="viewDetail(order)"
-         class="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center justify-between active:scale-[0.98]">
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-amber-400 group-hover:text-white transition-colors">
-          <ion-icon name="cube-outline" class="text-xl"></ion-icon>
-        </div>
-        <div>
-          <div class="flex items-center gap-1.5 mt-1">
-            <div [class]="order.status === 'delivered' ? 'bg-emerald-500' : 'bg-amber-500'" class="w-1.5 h-1.5 rounded-full animate-pulse"></div>
-            <p class="text-[10px] font-black uppercase" [ngClass]="order.status === 'delivered' ? 'text-emerald-600' : 'text-amber-600'">
-              {{ statusLabels[order.status] }}
-            </p>
+  <div class="p-4 md:p-8 max-w-5xl mx-auto space-y-3" *ngIf="!selectedOrder">
+
+    <div *ngIf="!orders || orders.length === 0" class="bg-white border-2 border-dashed border-slate-200 p-12 rounded-[2.5rem] text-center flex flex-col items-center justify-center mt-4">
+      <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+        <ion-icon name="bag-handle-outline" class="text-4xl text-slate-300"></ion-icon>
+      </div>
+      <h4 class="text-slate-800 font-bold text-sm uppercase mb-1">Aún no tienes pedidos</h4>
+      <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-6">Empieza a explorar nuestro catálogo de libros</p>
+      <button routerLink="/home/libros" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3! rounded-2xl! text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/30 transition-all active:scale-95">
+        Explorar Catálogo
+      </button>
+    </div>
+
+    <ng-container *ngIf="orders && orders.length > 0">
+      <div *ngFor="let order of orders" (click)="viewDetail(order)"
+           class="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center justify-between active:scale-[0.98]">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-amber-400 group-hover:text-white transition-colors">
+            <ion-icon name="cube-outline" class="text-xl"></ion-icon>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5 mt-1">
+              <div [class]="order.status === 'delivered' ? 'bg-emerald-500' : 'bg-amber-500'" class="w-1.5 h-1.5 rounded-full animate-pulse"></div>
+              <p class="text-[10px] font-black uppercase" [ngClass]="order.status === 'delivered' ? 'text-emerald-600' : 'text-amber-600'">
+                {{ statusLabels[order.status] }}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <div class="text-right">
-          <p class="text-xs font-black text-slate-400 uppercase tracking-tighter">Total</p>
-          <p class="text-sm font-black text-slate-900">${{ order.total }}</p>
+        <div class="flex items-center gap-3">
+          <div class="text-right">
+            <p class="text-xs font-black text-slate-400 uppercase tracking-tighter">Total</p>
+            <p class="text-sm font-black text-slate-900">${{ order.total }}</p>
+          </div>
+          <ion-icon name="chevron-forward" class="text-slate-300"></ion-icon>
         </div>
-        <ion-icon name="chevron-forward" class="text-slate-300"></ion-icon>
       </div>
-    </div>
+    </ng-container>
+
   </div>
 
   <div class="p-4 md:p-8 max-w-5xl mx-auto" *ngIf="selectedOrder">
@@ -147,5 +162,62 @@
       </div>
     </div>
   </div>
+
+  <footer class="bg-white border-t border-slate-200 mt-16 pt-12 pb-8">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-10">
+
+        <div class="space-y-4">
+          <div class="flex items-center gap-2">
+            <img src="assets/logo-educamex.png" alt="EDUMEX Logo" class="w-8 h-8 object-contain">
+
+            <span class="text-xl font-black tracking-tighter text-slate-800">EDUMEX</span>
+          </div>
+          <p class="text-slate-500 text-sm leading-relaxed">
+            Tu distribuidora de confianza. Comprometidos con llevar la mejor literatura educativa y recursos digitales a cada rincón de México.
+          </p>
+        </div>
+
+        <div class="md:pl-10">
+          <h4 class="text-slate-800 font-bold uppercase tracking-wider text-[11px] mb-5">Explora</h4>
+          <ul class="space-y-3 text-sm text-slate-500 font-medium">
+            <li><a routerLink="/home" class="hover:text-blue-600 transition-colors cursor-pointer">Inicio</a></li>
+            <li><a routerLink="/home/libros" class="hover:text-blue-600 transition-colors cursor-pointer">Catálogo de Libros</a></li>
+            <li><a routerLink="/home/pedidos" class="hover:text-blue-600 transition-colors cursor-pointer">Mis Pedidos</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-slate-800 font-bold uppercase tracking-wider text-[11px] mb-5">Datos de Contacto</h4>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <div class="mt-1 w-5 h-5 text-blue-500 shrink-0"><ion-icon name="mail-outline"></ion-icon></div>
+              <span class="text-sm text-slate-500 font-medium tracking-tight">edumexcontacto&#64;gmail.com</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="mt-1 w-5 h-5 text-blue-500 shrink-0"><ion-icon name="call-outline"></ion-icon></div>
+              <span class="text-sm text-slate-500 font-medium tracking-tight">+52 (78) 4118 8434</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="mt-1 w-5 h-5 text-blue-500 shrink-0"><ion-icon name="location-outline"></ion-icon></div>
+              <span class="text-sm text-slate-500 font-medium leading-snug">
+                 5 de Mayo 784, Barrio del Zapote,93400<br>
+                Papantla de Olarte, Ver.
+              </span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest">
+          &copy; 2026 EDUMEX. Todos los derechos reservados.
+        </p>
+      </div>
+
+    </div>
+  </footer>
 
 </ion-content>

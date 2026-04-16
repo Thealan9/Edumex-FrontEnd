@@ -322,3 +322,34 @@ th {
 //  --show-full-highlight: 0 !important;
 //  --inner-highligh-height: 0px !important; // Algunos componentes usan esta variante
 //}
+
+.dispatch-radio-alert {
+
+  .alert-radio-label {
+    color: #1e293b !important;
+    opacity: 1 !important;
+    font-weight: 500;
+    white-space: normal !important;
+    display: flex !important;
+    align-items: center !important;
+    line-height: 1.2 !important;
+    padding-left: 56px !important;
+  }
+
+  [aria-checked="true"] .alert-radio-label {
+    color: #2563eb !important;
+  }
+
+  .alert-button-inner {
+    position: relative !important;
+    min-height: 30px !important;
+  }
+
+  .alert-radio-icon {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    margin: 0 !important;
+    left: 20px !important;
+  }
+}

@@ -68,6 +68,7 @@ export class OrdersPage implements OnInit, OnDestroy {
   async dispatchOrder(orderId: number) {
     const alert = await this.alertCtrl.create({
       header: 'Despachar Pedido Con',
+      cssClass: 'dispatch-radio-alert',
       inputs: [
         { name: 'company', type: 'radio', label: 'FedEx', value: 'FEDX', checked: true },
         { name: 'company', type: 'radio', label: 'DHL Express', value: 'DHL' },
